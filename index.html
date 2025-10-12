@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loire Valley: Central Vineyards & Central France - A Wine Master's Challenge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .modal-content {
+            max-height: 80vh;
+        }
+        .prose-purple a {
+            color: #9333ea;
+        }
+        .prose-purple a:hover {
+            color: #7e22ce;
+        }
+        .timeline-item.selected {
+            background-color: #6b21a8;
+            color: white;
+        }
+        .flashcard-container {
+            perspective: 1000px;
+        }
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        .flashcard.is-flipped {
+            transform: rotateY(180deg);
+        }
+        .flashcard-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+        .flashcard-front {
+            background-color: #374151; /* gray-700 */
+        }
+        .flashcard-back {
+            background-color: #4b5563; /* gray-600 */
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+    <div id="main-menu" class="min-h-screen flex flex-col items-center justify-center p-4">
+        <h1 class="text-4xl md:text-5xl font-bold text-purple-400 mb-2 text-center">Loire Valley: Central Vineyards & Central France</h1>
+        <h2 class="text-2xl md:text-3xl font-semibold mb-8 text-center">A Wine Master's Challenge</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-4xl mb-8">
+            <button data-module="historian" class="module-btn bg-gray-800 p-6 rounded-lg hover:bg-purple-700 transition-colors duration-300">
+                <h3 class="text-xl font-bold mb-2">The Historian's Scroll</h3>
+                <p class="text-gray-400">Order key events that shaped the Central Loire.</p>
+            </button>
+            <button data-module="terroir" class="module-btn bg-gray-800 p-6 rounded-lg hover:bg-purple-700 transition-colors duration-300">
+                <h3 class="text-xl font-bold mb-2">The Terroir Architect</h3>
+                <p class="text-gray-400">Master the soils, climate, and geography.</p>
+            </button>
+            <button data-module="ampelographer" class="module-btn bg-gray-800 p-6 rounded-lg hover:bg-purple-700 transition-colors duration-300">
+                <h3 class="text-xl font-bold mb-2">The Ampelographer's Challenge</h3>
+                <p class="text-gray-400">Identify key grape varieties and their roles.</p>
+            </button>
+            <button data-module="lawmaker" class="module-btn bg-gray-800 p-6 rounded-lg hover:bg-purple-700 transition-colors duration-300">
+                <h3 class="text-xl font-bold mb-2">The Lawmaker's Desk</h3>
+                <p class="text-gray-400">Navigate the complexities of AOP law.</p>
+            </button>
+            <button data-module="gastronome" class="module-btn bg-gray-800 p-6 rounded-lg hover:bg-purple-700 transition-colors duration-300">
+                <h3 class="text-xl font-bold mb-2">The Gastronome's Table</h3>
+                <p class="text-gray-400">Explore classic food pairings and local cuisine.</p>
+            </button>
+            <button data-module="critic" class="module-btn bg-gray-800 p-6 rounded-lg hover:bg-purple-700 transition-colors duration-300">
+                <h3 class="text-xl font-bold mb-2">The Critic's Corner</h3>
+                <p class="text-gray-400">Analyze vintages and iconic producers.</p>
+            </button>
+        </div>
+
+        <div class="w-full max-w-4xl">
+            <button data-module="flashcard" class="module-btn bg-gray-800 p-6 rounded-lg hover:bg-purple-700 transition-colors duration-300 w-full">
+                <h3 class="text-xl font-bold mb-2">Flashcard Study</h3>
+                <p class="text-gray-400">Build your knowledge with targeted review.</p>
+            </button>
+        </div>
+    	
+        <button id="ai-settings-btn" class="mt-8 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+            ⚙️ AI Settings
+        </button>
+    </div>
+
+    <div id="game-screen" class="hidden min-h-screen flex flex-col items-center justify-center p-4">
+        </div>
+
+    <div id="modal-container" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div id="modal-content-wrapper" class="bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl modal-content overflow-y-auto">
+            </div>
+    </div>
+
+    <script>
+        const gameData = {
+            historian: {
+                title: "The Historian's Scroll",
+                instructions: "For each of the 5 challenges, arrange the historical events in chronological order from earliest to latest. Tap an event to add it to your timeline, then submit your answer.",
+                questions: [
+                    {
+                        question: "Arrange these foundational AOC establishments in the Central Vineyards.",
+                        events: [
+                            { text: "Quincy AOP is established, becoming the second AOP in all of France.", date: 1936 },
+                            { text: "Sancerre AOP is created exclusively for Sauvignon Blanc wines.", date: 1936 },
+                            { text: "Pouilly-Fumé and Pouilly-sur-Loire AOPs are officially demarcated.", date: 1937 },
+                            { text: "Red and rosé wines made from Pinot Noir are officially incorporated into the Sancerre AOP.", date: 1959 },
+                            { text: "Red and rosé wines are added to the Reuilly AOP.", date: 1961 },
+                        ]
+                    },
+                    {
+                        question: "Order the key events related to grape variety dominance in Sancerre.",
+                        events: [
+                            { text: "Grégoire of Tours makes the first written reference to vineyards in the Sancerre area.", date: 582 },
+                            { text: "John the Magnificent, Duke of Berry, declares the area's Pinot Noir wines 'the best in the kingdom'.", date: 1400 }, // Approx date
+                            { text: "Phylloxera devastates the Sancerre vineyards, which were predominantly planted to Pinot Noir.", date: 1880 }, // Approx date
+                            { text: "During replanting, Sauvignon Blanc begins to gain favor over Pinot Noir and Chasselas.", date: 1900 }, // Approx date
+                            { text: "The new Sancerre AOP legally codifies Sauvignon Blanc as the sole grape for the appellation's white wines.", date: 1936 },
+                        ]
+                    },
+                    {
+                        question: "Place the establishment of these 'Central France' AOPs in the correct order.",
+                        events: [
+                            { text: "Côte Roannaise is granted AOP status.", date: 1994 },
+                            { text: "Côtes du Forez is elevated from VDQS to AOP.", date: 2000 },
+                            { text: "Saint-Pourçain is promoted from VDQS to AOP status.", date: 2009 },
+                            { text: "Côtes d'Auvergne is granted AOP status.", date: 2010 },
+                            { text: "The growers' association 'Loire Volcanique' is formed to promote the wines of Central France.", date: 2019 },
+                        ]
+                    },
+                    {
+                        question: "Arrange the establishment of these 'satellite' appellations of the Central Vineyards.",
+                        events: [
+                            { text: "Menetou-Salon is granted AOP status.", date: 1959 },
+                            { text: "Châteaumeillant is elevated from VDQS to AOP status.", date: 2010 },
+                            { text: "Coteaux du Giennois is promoted from VDQS to AOP status.", date: 1998 },
+                            { text: "Orléans AOP is created.", date: 2006 },
+                            { text: "Orléans-Cléry AOP is created for Cabernet Franc wines.", date: 2006 },
+                        ]
+                    },
+                ]
+            },
+            terroir: {
+                title: "The Terroir Architect",
+                instructions: "Answer 10 multiple-choice questions about the geology, geography, and climate of the Central Loire.",
+                questions: [
+                    { q: "What is the name for the Kimmeridgian marl soils in Sancerre, analogous to those in Chablis?", a: "Terres Blanches", o: ["Caillottes", "Silex", "Perruches"] },
+                    { q: "The 'gunflint' (pierre à fusil) aroma in Sauvignon Blanc is most associated with which soil type?", a: "Silex", o: ["Terres Blanches", "Caillottes", "Gabbro"] },
+                    { q: "The climate of the Central Vineyards is best described as:", a: "Semi-Continental", o: ["Maritime", "Mediterranean", "Alpine"] },
+                    { q: "The vineyards of Central France (e.g., Côte Roannaise) are primarily situated on soils derived from what ancient geological feature?", a: "Massif Central", o: ["Armorican Massif", "Paris Basin", "Jura Mountains"] },
+                    { q: "What are 'Caillottes' soils primarily composed of?", a: "Stony, fossil-rich limestone", o: ["Clay-limestone marl", "Flint mixed with clay", "Volcanic basalt"] },
+                    { q: "Which of these is the most significant and recurring viticultural risk in the Central Vineyards?", a: "Spring Frost", o: ["Drought", "Excessive heat", "Salinity"] },
+                    { q: "The vineyards of Sancerre and Pouilly-Fumé are situated on sedimentary formations from which geological basin?", a: "Paris Basin", o: ["Aquitaine Basin", "Armorican Massif", "Massif Central"] },
+                    { q: "What type of parent rock is characteristic of the Gamay-focused appellations of Côte Roannaise and Côtes du Forez?", a: "Granite", o: ["Limestone", "Schist", "Gneiss"] },
+                    { q: "Which soil type in Sancerre tends to warm up fastest, producing aromatic, early-drinking wines?", a: "Caillottes", o: ["Terres Blanches", "Silex", "Clay"] },
+                    { q: "The vineyards of the Côtes d'Auvergne are defined by what unique soil composition?", a: "Volcanic deposits", o: ["Kimmeridgian marl", "Alluvial sand", "Flint"] },
+                    { q: "The Sancerre and Thauvenay fault lines create a geological divide, with Silex soils found predominantly on which side?", a: "Eastern side, towards the river", o: ["Western side, away from the river", "On the hilltops only", "In the valleys only"] },
+                    { q: "The semi-continental climate of the upper Loire, influenced by altitude, has what primary characteristic?", a: "Cold winters and hot summers", o: ["Mild winters and cool summers", "High humidity year-round", "Low diurnal shift"] },
+                    { q: "A warm, descending wind known as the 'foehn' is a key climatic influence in which region?", a: "The upper Loire (Central France)", o: ["Sancerre", "Quincy", "Orléans"] },
+                    { q: "The Kimmeridgian marls of Sancerre are from which geological period?", a: "Jurassic", o: ["Cretaceous", "Precambrian", "Miocene"] },
+                    { q: "The vineyards of Saint-Pourçain feature a mix of sand, clay-limestone, and islands of what other parent rock?", a: "Granite", o: ["Schist", "Gneiss", "Basalt"] },
+                    { q: "What is the approximate altitude of the vineyards in the Côte Roannaise?", a: "400 to 500 meters", o: ["At sea level", "100 to 200 meters", "Over 800 meters"] },
+                    { q: "Which soil type in Sancerre is coolest and ripens latest, producing powerful, structured wines?", a: "Terres Blanches", o: ["Caillottes", "Silex", "Gravel"] },
+                    { q: "What river separates the appellations of Sancerre and Pouilly-Fumé?", a: "The Loire", o: ["The Cher", "The Allier", "The Indre"] },
+                    { q: "The vineyards of Quincy and Reuilly are located on ancient terraces of what primary soil texture?", a: "Sand-based soils with gravel", o: ["Heavy clay", "Pure limestone", "Flint"] },
+                    { q: "Which region is geographically closer to Burgundy's Mâconnais than to most other Loire vineyards?", a: "Côte Roannaise", o: ["Sancerre", "Orléans", "Menetou-Salon"] },
+                    { q: "The 'Central Vineyards' are so-named because they are near the geographical center of what country?", a: "France", o: ["Europe", "The Loire region", "The Paris Basin"] },
+                    { q: "The high altitudes of the Central France vineyards (up to 600m) have what effect on the climate?", a: "It counteracts the more southerly latitude, keeping the climate cool.", o: ["It makes the climate warmer.", "It significantly increases rainfall.", "It eliminates the risk of frost."] },
+                    { q: "What is the dominant soil type in the Orléans AOP?", a: "Sandy-gravel", o: ["Kimmeridgian marl", "Flint", "Volcanic ash"] },
+                    { q: "Menetou-Salon's soils are primarily composed of what from the Upper Jurassic period?", a: "Limestone", o: ["Granite", "Schist", "Sand"] },
+                    { q: "In which region do vines grow directly on volcanic ash deposits in crus like Corent?", a: "Côtes d'Auvergne", o: ["Sancerre", "Saint-Pourçain", "Côtes du Forez"] },
+                    { q: "Which two AOPs are located in the valley of the Cher river, a Loire tributary?", a: "Quincy and Reuilly", o: ["Sancerre and Pouilly-Fumé", "Côte Roannaise and Côtes du Forez", "Orléans and Orléans-Cléry"] },
+                    { q: "What is the parent material for the soils in the Châteaumeillant AOP?", a: "Sandstone, schist, and gneiss", o: ["Pure limestone", "Granite", "Volcanic rock"] },
+                    { q: "What is the topographical reason for Sancerre's suitability for viticulture?", a: "South-facing slopes on hills averaging 200-400m", o: ["Flat, fertile river plains", "A high, arid plateau", "Coastal plains"] },
+                    { q: "The soils around Saint-Andelain in Pouilly-Fumé are particularly known for their high concentration of what?", a: "Flint (Silex)", o: ["Granite", "Schist", "Gabbro"] },
+                    { q: "What is the primary soil type in the Saint-Pourçain AOP?", a: "A mix of sand, granite, and clay-limestone", o: ["Uniform Kimmeridgian marl", "Pure volcanic rock", "Alluvial silt"] },
+                    { q: "Which Central Vineyards AOP is a narrow, 50-kilometer strip on the right bank of the Loire?", a: "Coteaux du Giennois", o: ["Menetou-Salon", "Quincy", "Reuilly"] },
+                    { q: "Which region features more than 80 volcanic craters, forming its geological identity?", a: "Côtes d'Auvergne", o: ["Sancerre", "Côte Roannaise", "Châteaumeillant"] },
+                    { q: "What is the primary moderating influence for the Sancerre and Pouilly-Fumé vineyards?", a: "The Loire River", o: ["The Atlantic Ocean", "The Massif Central", "The Forest of Orléans"] },
+                    { q: "Which Central France AOP has east-facing vineyards in the foothills of the Madeleine mountains?", a: "Côte Roannaise", o: ["Côtes du Forez", "Saint-Pourçain", "Côtes d'Auvergne"] },
+                    { q: "Compared to the coastal Loire, the Central Vineyards experience a wider what?", a: "Diurnal temperature variation", o: ["Range of permitted grapes", "Amount of annual rainfall", "Degree of maritime influence"] },
+                    { q: "Which soil type, a mix of clay and limestone, is known to retain water well, aiding vines in dry periods?", a: "Terres Blanches", o: ["Caillottes", "Silex", "Sand"] },
+                    { q: "The limestone soils in Menetou-Salon are geologically from which period?", a: "Upper Jurassic", o: ["Cretaceous", "Precambrian", "Triassic"] },
+                    { q: "The town of Sancerre itself is situated on a prominent...", a: "Hilltop", o: ["River island", "Coastal plain", "Volcanic crater"] },
+                    { q: "Which AOP is located on the right (east) bank of the Loire, opposite Sancerre?", a: "Pouilly-Fumé", o: ["Menetou-Salon", "Quincy", "Reuilly"] },
+                    { q: "What is the primary topographical difference between Sancerre and Quincy?", a: "Sancerre is hilly, while Quincy is flatter.", o: ["Quincy is at a much higher altitude.", "Sancerre is coastal, Quincy is inland.", "Quincy is mountainous, Sancerre is flat."] },
+                    { q: "The IGP Côtes de la Charité is located south of which major AOP?", a: "Pouilly-Fumé", o: ["Sancerre", "Menetou-Salon", "Côtes d'Auvergne"] },
+                    { q: "Which two AOPs are situated on opposite banks of the Loire near the city of Orléans?", a: "Orléans and Orléans-Cléry", o: ["Sancerre and Pouilly-Fumé", "Quincy and Reuilly", "Coteaux du Giennois and Menetou-Salon"] },
+                    { q: "The vineyards in the Central France AOPs are generally at a higher what compared to the Central Vineyards?", a: "Altitude", o: ["Latitude", "Longitude", "Humidity"] },
+                    { q: "Which AOP is located just southwest of Quincy, in the valley of the Arnon River?", a: "Reuilly", o: ["Menetou-Salon", "Coteaux du Giennois", "Sancerre"] },
+                    { q: "Which Central Vineyards AOP extends southwest from Sancerre, towards the city of Bourges?", a: "Menetou-Salon", o: ["Quincy", "Reuilly", "Coteaux du Giennois"] },
+                    { q: "The 'pudding stones' found in some Loire terroirs are a type of what?", a: "Conglomerate rock", o: ["Igneous rock", "Metamorphic rock", "Sedimentary fossil"] },
+                    { q: "What is the primary benefit of the rolling hills in Sancerre?", a: "They provide a variety of aspects and exposures.", o: ["They retain heat overnight.", "They block all wind.", "They are easy to machine harvest."] },
+                    { q: "The landscape of Reuilly is dominated by vineyards and what other type of agriculture?", a: "Cereal crops", o: ["Livestock grazing", "Orchards", "Forestry"] },
+                    { q: "Which region's name literally means 'hillsides of the Gien area'?", a: "Coteaux du Giennois", o: ["Côtes d'Auvergne", "Côte Roannaise", "Côtes du Forez"] },
+                    { q: "The geology of Sancerre and Chablis is linked by the presence of what soil type?", a: "Kimmeridgian marl", o: ["Granite", "Volcanic tuff", "Schist"] }
+                ]
+            },
+            ampelographer: {
+                title: "The Ampelographer's Challenge",
+                instructions: "Answer 10 multiple-choice questions about the key grape varieties of the Central Loire.",
+                questions: [
+                    { q: "Which grape variety is used to produce the white wines of Sancerre and Pouilly-Fumé?", a: "Sauvignon Blanc", o: ["Chenin Blanc", "Chardonnay", "Melon de Bourgogne"], subjectType: 'grape', subjectName: 'Sauvignon Blanc' },
+                    { q: "Which grape variety is used for the red and rosé wines of Sancerre and Menetou-Salon?", a: "Pinot Noir", o: ["Cabernet Franc", "Gamay", "Pineau d'Aunis"], subjectType: 'grape', subjectName: 'Pinot Noir' },
+                    { q: "The red and rosé wines of Côte Roannaise and Côtes du Forez are made exclusively from which grape?", a: "Gamay", o: ["Pinot Noir", "Syrah", "Cabernet Franc"], subjectType: 'grape', subjectName: 'Gamay' },
+                    { q: "The unique 'vin gris' of Reuilly is a pale rosé made from which grape variety?", a: "Pinot Gris", o: ["Pinot Noir", "Gamay", "Grolleau"], subjectType: 'grape', subjectName: 'Pinot Gris' },
+                    { q: "The white wines of Pouilly-sur-Loire AOP are made exclusively from which grape?", a: "Chasselas", o: ["Sauvignon Blanc", "Chardonnay", "Melon de Bourgogne"], subjectType: 'grape', subjectName: 'Chasselas' },
+                    { q: "The red wines of Orléans AOP must be a majority blend of which grape variety?", a: "Pinot Meunier", o: ["Pinot Noir", "Cabernet Franc", "Gamay"], subjectType: 'grape', subjectName: 'Pinot Meunier' },
+                    { q: "The white wines of Saint-Pourçain AOP are a blend of Chardonnay and which local variety?", a: "Tressallier (Sacy)", o: ["Romorantin", "Orbois", "Folle Blanche"], subjectType: 'grape', subjectName: 'Tressallier' },
+                    { q: "The white wines of Côtes d'Auvergne AOP are made from 100% of which grape?", a: "Chardonnay", o: ["Sauvignon Blanc", "Chenin Blanc", "Tressallier"], subjectType: 'grape', subjectName: 'Chardonnay' },
+                    { q: "Before phylloxera, what was the dominant grape variety planted in Sancerre?", a: "Pinot Noir", o: ["Sauvignon Blanc", "Chasselas", "Gamay"], subjectType: 'history', subjectName: 'Sancerre Grape History' },
+                    { q: "The preferred Gamay clone in the Côte Roannaise, known for smaller berries and a peppery quality, is:", a: "Gamay Saint-Romain", o: ["Gamay de Bouze", "Gamay de Chaudenay", "Gamay Fréaux"], subjectType: 'clone', subjectName: 'Gamay Saint-Romain' },
+                    { q: "The red wine only appellation of Orléans-Cléry is made from 100% of which grape?", a: "Cabernet Franc", o: ["Pinot Meunier", "Pinot Noir", "Gamay"], subjectType: 'grape', subjectName: 'Cabernet Franc' },
+                    { q: "Which of these grapes is a parent of Sauvignon Blanc?", a: "Savagnin", o: ["Pinot Noir", "Gouais Blanc", "Chardonnay"], subjectType: 'grape', subjectName: 'Sauvignon Blanc' },
+                    { q: "In the Coteaux du Giennois AOP, red and rosé wines are a blend of Gamay and which other grape?", a: "Pinot Noir", o: ["Cabernet Franc", "Côt", "Pineau d'Aunis"], subjectType: 'grape', subjectName: 'Coteaux du Giennois Blend' },
+                    { q: "The small Châteaumeillant appellation produces red and 'vin gris' from Gamay, Pinot Noir, and which other grape?", a: "Pinot Gris", o: ["Chardonnay", "Sauvignon Blanc", "Syrah"], subjectType: 'grape', subjectName: 'Châteaumeillant Blend' },
+                    { q: "Which white grape, a minor player in the Loire, is permitted in the IGP Coteaux de Tannay?", a: "Melon B", o: ["Chenin Blanc", "Romorantin", "Sauvignon Gris"], subjectType: 'grape', subjectName: 'Melon B' },
+                    { q: "Which Swiss-derived grape cross is sometimes used for red IGP d'Urfé wines due to its rot resistance?", a: "Gamaret", o: ["Diolinoir", "Garanoir", "Galotta"], subjectType: 'grape', subjectName: 'Gamaret' },
+                    { q: "Which grape variety historically was a lucrative table grape in Pouilly before Sauvignon Blanc's rise?", a: "Chasselas", o: ["Folle Blanche", "Grolleau", "Orbois"], subjectType: 'history', subjectName: 'Chasselas History' },
+                    { q: "Which grape is known for being early budding, making it vulnerable to spring frosts?", a: "Pinot Noir", o: ["Sauvignon Blanc", "Gamay", "Chasselas"], subjectType: 'grape', subjectName: 'Pinot Noir' },
+                    { q: "Sauvignon Blanc's tightly packed bunches make it particularly susceptible to which fungal disease?", a: "Botrytis", o: ["Powdery Mildew", "Downy Mildew", "Esca"], subjectType: 'grape', subjectName: 'Sauvignon Blanc' },
+                    { q: "Which grape variety must comprise the majority of a red Saint-Pourçain blend?", a: "Gamay", o: ["Pinot Noir", "Syrah", "Côt"], subjectType: 'grape', subjectName: 'Saint-Pourçain Blend' },
+                    { q: "Which of these is NOT a permitted grape in the red wines of Valençay?", a: "Syrah", o: ["Gamay", "Pinot Noir", "Côt"], subjectType: 'grape', subjectName: 'Valençay Blend' },
+                    { q: "The red and rosé wines of the Côtes d'Auvergne are a blend of Gamay and which other grape?", a: "Pinot Noir", o: ["Syrah", "Cabernet Franc", "Côt"], subjectType: 'grape', subjectName: 'Côtes d\'Auvergne Blend' },
+                    { q: "Which white grape, besides Chardonnay, is permitted in the white wines of the IGP Côtes de la Charité?", a: "Pinot Gris", o: ["Sauvignon Blanc", "Chenin Blanc", "Melon B"], subjectType: 'grape', subjectName: 'Côtes de la Charité Blend' },
+                    { q: "What is the primary red grape variety of Châteaumeillant?", a: "Gamay", o: ["Pinot Noir", "Syrah", "Cabernet Franc"], subjectType: 'grape', subjectName: 'Châteaumeillant' },
+                    { q: "Which grape's naturally high acidity is a defining feature of Sancerre and Pouilly-Fumé?", a: "Sauvignon Blanc", o: ["Chardonnay", "Chasselas", "Pinot Gris"], subjectType: 'grape', subjectName: 'Sauvignon Blanc' },
+                    { q: "In Reuilly, which grape is used for red wines?", a: "Pinot Noir", o: ["Gamay", "Cabernet Franc", "Pinot Meunier"], subjectType: 'grape', subjectName: 'Pinot Noir' },
+                    { q: "What is the only red grape permitted in Sancerre AOP?", a: "Pinot Noir", o: ["Gamay", "Cabernet Franc", "Any red grape"], subjectType: 'grape', subjectName: 'Pinot Noir' },
+                    { q: "What is the historical synonym for Sauvignon Blanc in the Pouilly-Fumé region?", a: "Blanc Fumé", o: ["Pineau de la Loire", "Fiers", "Breton"], subjectType: 'grape', subjectName: 'Sauvignon Blanc' },
+                    { q: "Which grape is the only one permitted for red and rosé in Côte Roannaise?", a: "Gamay", o: ["Pinot Noir", "Syrah", "Côt"], subjectType: 'grape', subjectName: 'Gamay' },
+                    { q: "Which grape's pink skins are used to create the 'vin gris' style in Reuilly?", a: "Pinot Gris", o: ["Gamay", "Grolleau", "Pineau d'Aunis"], subjectType: 'grape', subjectName: 'Pinot Gris' },
+                    { q: "Which grape variety is known for its vigorous growth, often requiring low-vigor soils or rootstocks?", a: "Sauvignon Blanc", o: ["Pinot Noir", "Chasselas", "Tressallier"], subjectType: 'grape', subjectName: 'Sauvignon Blanc' },
+                    { q: "Which white grape is required to be the dominant variety in the white wines of Orléans AOP?", a: "Chardonnay", o: ["Sauvignon Blanc", "Pinot Gris", "Chenin Blanc"], subjectType: 'grape', subjectName: 'Chardonnay' },
+                    { q: "The rosés of Saint-Pourçain are made from 100% of which grape?", a: "Gamay", o: ["Pinot Noir", "Pinot Gris", "Grolleau"], subjectType: 'grape', subjectName: 'Gamay' },
+                    { q: "Which grape must account for at least 70% of a white Valençay blend?", a: "Sauvignon Blanc", o: ["Chardonnay", "Chenin Blanc", "Orbois"], subjectType: 'grape', subjectName: 'Sauvignon Blanc' },
+                    { q: "Which grape, also known as Sacy, is known for its high productivity and acidity?", a: "Tressallier", o: ["Folle Blanche", "Chasselas", "Romorantin"], subjectType: 'grape', subjectName: 'Tressallier' },
+                    { q: "Which grape is the only variety permitted for the white wines of Quincy AOP?", a: "Sauvignon Blanc", o: ["Chardonnay", "Chenin Blanc", "Chasselas"], subjectType: 'grape', subjectName: 'Sauvignon Blanc' },
+                    { q: "Which grape variety is often described as having notes of gooseberry, nettle, and citrus in the Central Vineyards?", a: "Sauvignon Blanc", o: ["Chardonnay", "Pinot Gris", "Chasselas"], subjectType: 'grape', subjectName: 'Sauvignon Blanc' },
+                    { q: "Which of these grapes is NOT permitted in the red wines of Coteaux du Giennois?", a: "Cabernet Franc", o: ["Pinot Noir", "Gamay", ""], subjectType: 'grape', subjectName: 'Coteaux du Giennois Blend' },
+                    { q: "In the IGP Coteaux de Tannay, which grape is NOT permitted for white wines?", a: "Sauvignon Blanc", o: ["Chardonnay", "Pinot Blanc", "Melon B"], subjectType: 'grape', subjectName: 'Coteaux de Tannay Blend' },
+                    { q: "The red wines of Menetou-Salon are made from 100% of which grape?", a: "Pinot Noir", o: ["Gamay", "Cabernet Franc", "Syrah"], subjectType: 'grape', subjectName: 'Pinot Noir' },
+                    { q: "Which grape variety, native to southwestern France, can be found in the blends of Valençay?", a: "Côt (Malbec)", o: ["Négrette", "Tannat", "Fer Servadou"], subjectType: 'grape', subjectName: 'Côt (Malbec)' },
+                    { q: "Which grape is a cross of Pinot and Gouais Blanc?", a: "Chardonnay", o: ["Gamay", "Melon B", "Sauvignon Blanc"], subjectType: 'grape', subjectName: 'Chardonnay' },
+                    { q: "Which grape variety is particularly vulnerable to both oidium and powdery mildew?", a: "Pinot Noir", o: ["Chasselas", "Tressallier", "Gamay"], subjectType: 'grape', subjectName: 'Pinot Noir' },
+                    { q: "Which grape did François Rabelais refer to as 'Fiers' in 1534?", a: "Sauvignon Blanc", o: ["Chenin Blanc", "Cabernet Franc", "Grolleau"], subjectType: 'history', subjectName: 'Sauvignon Blanc History' },
+                    { q: "Which grape is the only one permitted for reds and rosés in the Côtes du Forez AOP?", a: "Gamay", o: ["Pinot Noir", "Syrah", "Côt"], subjectType: 'grape', subjectName: 'Gamay' },
+                    { q: "Which of the Central France AOPs permits the blending of Gamay and Pinot Noir for its red wines?", a: "Saint-Pourçain", o: ["Côte Roannaise", "Côtes du Forez", ""], subjectType: 'grape', subjectName: 'Saint-Pourçain Blend' },
+                    { q: "Which grape variety is the most planted red grape in the Central Vineyards overall?", a: "Pinot Noir", o: ["Gamay", "Cabernet Franc", "Côt"], subjectType: 'grape', subjectName: 'Pinot Noir' },
+                    { q: "Which grape is the most planted white grape in the Central Vineyards?", a: "Sauvignon Blanc", o: ["Chardonnay", "Chasselas", "Pinot Gris"], subjectType: 'grape', subjectName: 'Sauvignon Blanc' },
+                    { q: "The 'Corent' cru of Côtes d'Auvergne is authorized only for rosé made from which grape(s)?", a: "Gamay and Pinot Noir", o: ["Pinot Gris", "Syrah", "Grolleau"], subjectType: 'grape', subjectName: 'Corent' },
+                    { q: "Which of these grapes is NOT allowed in the red wines of Châteaumeillant?", a: "Cabernet Franc", o: ["Gamay", "Pinot Noir", "Pinot Gris"], subjectType: 'grape', subjectName: 'Châteaumeillant' }
+                ]
+            },
+            lawmaker: {
+                title: "The Lawmaker's Desk",
+                instructions: "Answer 10 multiple-choice questions about the AOP laws of the Central Loire.",
+                questions: [
+                    { q: "What is the maximum base yield for Sancerre Blanc AOP?", a: "65 hl/ha", o: ["55 hl/ha", "59 hl/ha", "70 hl/ha"] },
+                    { q: "Which of these AOPs is for white wine only?", a: "Quincy", o: ["Sancerre", "Menetou-Salon", "Reuilly"] },
+                    { q: "In the Coteaux du Giennois AOP, what is the rule for blending Pinot Noir and Gamay in red wines?", a: "Neither may exceed 80%", o: ["Must be 50% Pinot Noir, 50% Gamay", "Pinot Noir must be the majority", "Gamay must be the majority"] },
+                    { q: "Which AOP is legally reserved for wines made from 100% Chasselas?", a: "Pouilly-sur-Loire", o: ["Pouilly-Fumé", "Quincy", "Cour-Cheverny"] },
+                    { q: "What is the minimum planting density for Sancerre AOP?", a: "6,100 vines per hectare", o: ["4,500 vines per hectare", "5,000 vines per hectare", "7,000 vines per hectare"] },
+                    { q: "Which of these AOPs was the first in the Loire to receive its legal status in August 1936?", a: "Quincy", o: ["Sancerre", "Pouilly-Fumé", "Vouvray"] },
+                    { q: "The red wines of Orléans AOP must contain what proportion of Pinot Meunier?", a: "70-90%", o: ["100%", "Min. 50%", "Max. 30%"] },
+                    { q: "What is the maximum base yield for red Sancerre AOP?", a: "59 hl/ha", o: ["65 hl/ha", "63 hl/ha", "55 hl/ha"] },
+                    { q: "Which of these AOPs is legally permitted to produce red, white, and rosé wines?", a: "Menetou-Salon", o: ["Pouilly-Fumé", "Quincy", "Pouilly-sur-Loire"] },
+                    { q: "For Sancerre Rouge, what is the mandatory release date?", a: "Not before March 15 of the year following harvest", o: ["Immediately after fermentation", "After two years of aging", "Not before December 1"] },
+                    { q: "What is the maximum base yield for Côte Roannaise AOP?", a: "55 hl/ha", o: ["60 hl/ha", "50 hl/ha", "65 hl/ha"] },
+                    { q: "In Saint-Pourçain AOP, what is the required proportion of Chardonnay in white wines?", a: "50-80%", o: ["100%", "Max. 20%", "Min. 90%"] },
+                    { q: "Which Central France AOP is legally for red and rosé wines only?", a: "Côtes du Forez", o: ["Saint-Pourçain", "Côtes d'Auvergne", ""], },
+                    { q: "What is the minimum potential alcohol for Sancerre Blanc?", a: "10.5%", o: ["9.5%", "11.0%", "12.0%"] },
+                    { q: "Which AOP is for red wine only and made from 100% Cabernet Franc?", a: "Orléans-Cléry", o: ["Orléans", "Menetou-Salon", "Châteaumeillant"] },
+                    { q: "In Reuilly, which grape is NOT permitted for rosé wines?", a: "Gamay", o: ["Pinot Noir", "Pinot Gris", ""], },
+                    { q: "What is the maximum residual sugar allowed for a dry Sancerre Blanc?", a: "4 g/l", o: ["0 g/l", "8 g/l", "10 g/l"] },
+                    { q: "Which AOP's sub-zone 'Corent' is legally authorized for rosé production only?", a: "Côtes d'Auvergne", o: ["Sancerre", "Saint-Pourçain", "Menetou-Salon"] },
+                    { q: "What is the minimum planting density for Pouilly-Fumé AOP?", a: "6,000 vines per hectare", o: ["5,000 vines per hectare", "5,500 vines per hectare", "6,500 vines per hectare"] },
+                    { q: "When was the Sancerre AOP expanded to include red and rosé wines?", a: "1959", o: ["1936", "1975", "1991"] },
+                    { q: "What is the maximum base yield for Quincy AOP?", a: "65 hl/ha", o: ["55 hl/ha", "60 hl/ha", "70 hl/ha"] },
+                    { q: "The rosé wines of Saint-Pourçain AOP must be made from 100% of which grape?", a: "Gamay", o: ["Pinot Noir", "Pinot Gris", "A blend"] },
+                    { q: "Which of these is NOT an official commune of production for Sancerre?", a: "Pouilly-sur-Loire", o: ["Bué", "Chavignol (part of Sancerre commune)", "Verdigny"] },
+                    { q: "In the red blend of Saint-Pourçain, what is the required proportion of Gamay?", a: "40-75%", o: ["100%", "Min. 80%", "Max. 20%"] },
+                    { q: "The white wines of Côtes d'Auvergne AOP are legally required to be 100% what?", a: "Chardonnay", o: ["Sauvignon Blanc", "Pinot Blanc", "Tressallier"] },
+                    { q: "What is the maximum base yield for red Menetou-Salon?", a: "59 hl/ha", o: ["55 hl/ha", "63 hl/ha", "65 hl/ha"] },
+                    { q: "Which of these is NOT a legally permitted grape variety in Valençay AOP?", a: "Chenin Blanc", o: ["Sauvignon Blanc", "Gamay", "Pinot Noir"] },
+                    { q: "The white wines of Orléans AOP are a blend of Chardonnay and what other grape?", a: "Pinot Gris", o: ["Sauvignon Blanc", "Chenin Blanc", "Aligoté"] },
+                    { q: "In Châteaumeillant, what is the minimum percentage of Gamay required for red wines from 2027 onward?", a: "60%", o: ["50%", "80%", "100%"] },
+                    { q: "What is the minimum potential alcohol for Pouilly-sur-Loire AOP?", a: "9.5%", o: ["10.5%", "10.0%", "11.0%"] },
+                    { q: "Which of these AOPs has the highest minimum planting density requirement?", a: "Sancerre (6,100 vines/ha)", o: ["Saint-Pourçain (4,000 vines/ha)", "Côte Roannaise (4,500 vines/ha)", "Orléans (5,000 vines/ha)"] },
+                    { q: "In Quincy AOP, what is the maximum permitted percentage of Sauvignon Gris?", a: "10%", o: ["0%", "5%", "20%"] },
+                    { q: "The sub-zones of Côtes d'Auvergne (Boudes, Chanturgue, etc.) are authorized for which style of wine?", a: "Red only (except Corent)", o: ["White only", "Rosé only", "All styles"] },
+                    { q: "Which Central Vineyards AOP was promoted from VDQS status in 1998?", a: "Coteaux du Giennois", o: ["Menetou-Salon", "Quincy", "Reuilly"] },
+                    { q: "What is the minimum must weight for Sancerre Rouge?", a: "175 g/l", o: ["170 g/l", "180 g/l", "165 g/l"] },
+                    { q: "Which of these is NOT a legally permitted grape in the white wines of IGP Coteaux de Tannay?", a: "Sauvignon Blanc", o: ["Chardonnay", "Melon B", "Pinot Gris"] },
+                    { q: "What is the maximum base yield for white Menetou-Salon?", a: "65 hl/ha", o: ["59 hl/ha", "63 hl/ha", "55 hl/ha"] },
+                    { q: "When was the Orléans AOP officially created?", a: "2006", o: ["1936", "1998", "2010"] },
+                    { q: "Is it legal to blend Sauvignon Blanc into Sancerre Blanc?", a: "No", o: ["Yes, up to 10%", "Yes, up to 15%", "Only in cool vintages"] },
+                    { q: "What is the maximum base yield for Côtes du Forez?", a: "55 hl/ha", o: ["50 hl/ha", "60 hl/ha", "65 hl/ha"] },
+                    { q: "The red wines of Valençay must contain Gamay, Pinot Noir, and what other grape?", a: "Côt (Malbec)", o: ["Cabernet Franc", "Syrah", "Pineau d'Aunis"] },
+                    { q: "What is the maximum residual sugar for a rosé from Reuilly?", a: "4 g/l", o: ["2.5 g/l", "6 g/l", "0 g/l"] },
+                    { q: "The 'Val de Loire' geographical designation can be added to the label of which of these AOPs?", a: "All of them", o: ["Sancerre only", "Pouilly-Fumé only", "None of them"] },
+                    { q: "Which of these is NOT a commune of production for Pouilly-Fumé?", a: "Sancerre", o: ["Saint-Andelain", "Tracy-sur-Loire", "Garchy"] },
+                    { q: "What is the minimum percentage of Gamay required in a red blend from Saint-Pourçain?", a: "40%", o: ["25%", "50%", "60%"] },
+                    { q: "Which AOP, created in 2010, is one of the newest in the Central France region?", a: "Côtes d'Auvergne", o: ["Saint-Pourçain", "Côte Roannaise", "Côtes du Forez"] },
+                    { q: "What is the minimum percentage of Pinot Noir in the red blend of Saint-Pourçain?", a: "25%", o: ["40%", "50%", "10%"] },
+                    { q: "Which IGP covers the same area as Côte Roannaise and Côtes du Forez for non-conforming wines?", a: "IGP d'Urfé", o: ["IGP Val de Loire", "IGP Puy de Dôme", "IGP Côtes de la Charité"] },
+                    { q: "What is the minimum potential alcohol for Quincy AOP?", a: "10.5%", o: ["10.0%", "11.0%", "9.5%"] },
+                    { q: "Which AOP was officially established in 1994?", a: "Côte Roannaise", o: ["Côtes du Forez", "Saint-Pourçain", "Coteaux du Giennois"] }
+                ]
+            },
+            gastronome: {
+                title: "The Gastronome's Table",
+                instructions: "Answer 10 multiple-choice questions about the cuisine and pairings of the Central Loire.",
+                questions: [
+                    { q: "Which AOP is the classic, world-renowned pairing for Crottin de Chavignol goat cheese?", a: "Sancerre", o: ["Vouvray", "Muscadet", "Chinon"], subjectType: 'wine_pairing', subjectName: 'Crottin de Chavignol and Sancerre' },
+                    { q: "The Valençay AOP is unique as it is a protected designation for both wine and what other product?", a: "Goat cheese", o: ["Pork rillettes", "Apples", "Lentils"], subjectType: 'ingredient', subjectName: 'Valençay Cheese' },
+                    { q: "What is the name of the small, firm, cylindrical goat cheese from the village of Chavignol?", a: "Crottin de Chavignol", o: ["Sainte-Maure de Touraine", "Selles-sur-Cher", "Pouligny-Saint-Pierre"], subjectType: 'ingredient', subjectName: 'Crottin de Chavignol' },
+                    { q: "The high acidity of Sancerre serves what purpose when paired with the richness of goat cheese?", a: "It cuts through the fat and cleanses the palate.", o: ["It cancels out the tangy flavor of the cheese.", "It adds a sweet counterpoint.", "It softens the texture of the cheese."], subjectType: 'wine_pairing', subjectName: 'Crottin de Chavignol and Sancerre' },
+                    { q: "A light, fruity red Sancerre made from Pinot Noir would be a good pairing for what type of dish?", a: "Grilled chicken or charcuterie", o: ["Rich beef stew", "Spicy Asian cuisine", "Heavy cream sauces"], subjectType: 'wine_pairing', subjectName: 'Red Sancerre pairings' },
+                    { q: "Which cheese, shaped like a truncated pyramid and coated in ash, shares its AOP with local wines?", a: "Valençay", o: ["Crottin de Chavignol", "Selles-sur-Cher", "Pouligny-Saint-Pierre"], subjectType: 'ingredient', subjectName: 'Valençay Cheese' },
+                    { q: "A crisp Quincy or Reuilly Sauvignon Blanc is a classic match for what type of food?", a: "Freshwater fish from the Loire or Cher rivers", o: ["Roasted lamb", "Aged hard cheeses", "Chocolate desserts"], subjectType: 'wine_pairing', subjectName: 'Sauvignon Blanc and Fish' },
+                    { q: "The mineral and herbal notes in a Pouilly-Fumé complement which ingredient often found in local dishes?", a: "Fresh herbs like parsley and chives", o: ["Heavy spices like cumin and coriander", "Sweet fruits like figs and dates", "Rich, fatty meats"], subjectType: 'wine_pairing', subjectName: 'Pouilly-Fumé and Herbs' },
+                    { q: "A light, peppery Gamay from the Côte Roannaise is a traditional bistro pairing for what?", a: "Coq au vin or simple sausages", o: ["Oysters", "Foie gras", "Truffles"], subjectType: 'wine_pairing', subjectName: 'Gamay and Bistro Fare' },
+                    { q: "The term 'vigneron's lunch' in the Central Loire would most likely feature local wine, bread, and what else?", a: "Goat cheese and charcuterie", o: ["Exotic seafood", "Spicy stews", "Imported beef"], subjectType: 'gastronomy', subjectName: 'Local Cuisine' },
+                    { q: "The name 'Crottin' is derived from a small oil lamp, which the aged cheese resembles. Where is it from?", a: "Chavignol, within Sancerre", o: ["Valençay", "Tours", "Roanne"], subjectType: 'ingredient', subjectName: 'Crottin de Chavignol' },
+                    { q: "The zesty, citrus character of a Menetou-Salon Blanc is a good match for dishes with what kind of sauce?", a: "Lemon and butter sauce", o: ["Heavy cream sauce", "Spicy tomato sauce", "Sweet barbecue sauce"], subjectType: 'wine_pairing', subjectName: 'Menetou-Salon Pairings' },
+                    { q: "A 'vin gris' from Reuilly, with its pale color and aromatic profile, is an ideal aperitif or partner for what?", a: "Light salads and grilled prawns", o: ["Steak au poivre", "Chocolate cake", "Blue cheese"], subjectType: 'wine_pairing', subjectName: 'Vin Gris Pairings' },
+                    { q: "The cuisine of the Central France region (Auvergne) is known for being...", a: "Rustic and hearty", o: ["Light and coastal", "Spicy and exotic", "Modern and molecular"], subjectType: 'gastronomy', subjectName: 'Auvergne Cuisine' },
+                    { q: "Which of these is a famous dish from the Auvergne region?", a: "Aligot (cheesy mashed potatoes)", o: ["Bouillabaisse", "Cassoulet", "Choucroute garnie"], subjectType: 'dish', subjectName: 'Aligot' },
+                    { q: "The pairing of Sancerre and Crottin de Chavignol is an example of what classic pairing principle?", a: "'What grows together, goes together'", o: ["Sweet with sweet", "Contrast of flavors", "Pairing by color"], subjectType: 'wine_pairing', subjectName: 'Crottin de Chavignol and Sancerre' },
+                    { q: "Charolais beef, a famous product from near the Central France vineyards, would pair well with what wine?", a: "A structured red Saint-Pourçain", o: ["A light Pouilly-sur-Loire", "A crisp Sancerre Blanc", "A sweet dessert wine"], subjectType: 'wine_pairing', subjectName: 'Beef and Central France Reds' },
+                    { q: "Which local product is NOT from the Central Vineyards or Central France area?", a: "Rillettes de Tours", o: ["Crottin de Chavignol", "Valençay cheese", "Charolais beef"], subjectType: 'gastronomy', subjectName: 'Regional Gastronomy' },
+                    { q: "A Pouilly-Fumé grown on 'silex' soil, with its smoky notes, would be an interesting pairing for what kind of food?", a: "Smoked trout or salmon", o: ["Sweet fruit tarts", "Spicy curries", "Creamy pasta"], subjectType: 'wine_pairing', subjectName: 'Smoky Wines and Food' },
+                    { q: "The simple, light-bodied wines from Pouilly-sur-Loire (Chasselas) are best enjoyed with what?", a: "Simple, light fare like river fish or as an aperitif", o: ["Rich, aged cheeses", "Hearty game meats", "Complex, spicy dishes"], subjectType: 'wine_pairing', subjectName: 'Chasselas Pairings' },
+                    { q: "Which cheese from the Central Vineyards region has PDO status?", a: "Crottin de Chavignol", o: ["Comté", "Roquefort", "Brie de Meaux"], subjectType: 'ingredient', subjectName: 'Crottin de Chavignol' },
+                    { q: "A light, fruity red from Coteaux du Giennois would be a good match for what?", a: "A picnic with cold cuts and pâté", o: ["A heavy beef bourguignon", "Oysters on the half shell", "A rich chocolate mousse"], subjectType: 'wine_pairing', subjectName: 'Coteaux du Giennois Pairings' },
+                    { q: "The traditional cuisine of the Sancerrois is best described as...", a: "Simple, high-quality, farm-based fare", o: ["Elaborate, multi-course gastronomic meals", "Influenced by coastal seafood", "Heavily spiced"], subjectType: 'gastronomy', subjectName: 'Sancerrois Cuisine' },
+                    { q: "The fine, elegant Pinot Noir from Menetou-Salon would pair well with what?", a: "Roasted duck or game birds", o: ["Grilled lobster", "Spicy tacos", "Sweet desserts"], subjectType: 'wine_pairing', subjectName: 'Menetou-Salon Pinot Noir Pairings' },
+                    { q: "Which of these is NOT a PDO goat cheese from the Loire Valley?", a: "Pélardon", o: ["Valençay", "Selles-sur-Cher", "Sainte-Maure de Touraine"], subjectType: 'ingredient', subjectName: 'Loire Goat Cheeses' },
+                    { q: "The pairing of an acidic wine like Sancerre with an acidic ingredient like goat cheese is an example of what?", a: "A complementary pairing", o: ["A contrasting pairing", "A destructive pairing", "A textural pairing"], subjectType: 'wine_pairing', subjectName: 'Acidic Pairings' },
+                    { q: "Lentils from Le Puy are a famous product from which region?", a: "Auvergne", o: ["Sancerrois", "Touraine", "Nantais"], subjectType: 'ingredient', subjectName: 'Puy Lentils' },
+                    { q: "A hearty Auvergnat sausage and lentil dish would pair best with which wine?", a: "A rustic red from Côtes d'Auvergne", o: ["A delicate Pouilly-Fumé", "A sweet wine", "A sparkling wine"], subjectType: 'wine_pairing', subjectName: 'Auvergne Pairings' },
+                    { q: "The slightly bitter finish on some Silex-grown Sauvignon Blancs can be a good match for what food flavor?", a: "Asparagus", o: ["Sweet caramel", "Rich umami", "Spicy chili"], subjectType: 'wine_pairing', subjectName: 'Difficult Pairings' },
+                    { q: "Which of these is a famous oak forest located in the Allier department, near Saint-Pourçain?", a: "Tronçais", o: ["Vosges", "Limousin", "Fontainebleau"], subjectType: 'place', subjectName: 'Tronçais Forest' },
+                    { q: "A dry rosé from Sancerre is a versatile wine that pairs well with what?", a: "Summer salads and light pasta dishes", o: ["Rich chocolate desserts", "Aged beef", "Blue cheese"], subjectType: 'wine_pairing', subjectName: 'Sancerre Rosé Pairings' },
+                    { q: "The 'gunflint' note in Pouilly-Fumé is a type of what aroma category?", a: "Mineral", o: ["Fruity", "Floral", "Spicy"], subjectType: 'wine', subjectName: 'Pouilly-Fumé' },
+                    { q: "Which of these is a key flavor in a young, red Sancerre?", a: "Red cherry and raspberry", o: ["Blackcurrant and cedar", "Black pepper and smoke", "Prune and leather"], subjectType: 'wine', subjectName: 'Red Sancerre' },
+                    { q: "The culinary tradition of the Central Vineyards is heavily influenced by its proximity to what major city?", a: "Paris", o: ["Lyon", "Bordeaux", "Marseille"], subjectType: 'gastronomy', subjectName: 'Parisian Influence' },
+                    { q: "The peppery character of Gamay Saint-Romain from Côte Roannaise would complement what seasoning in a dish?", a: "Black pepper", o: ["Cinnamon", "Vanilla", "Sugar"], subjectType: 'wine_pairing', subjectName: 'Gamay Saint-Romain Pairings' },
+                    { q: "Which cheese shares an AOP with an appellation that specializes in Sauvignon Blanc, Gamay, and Pinot Noir?", a: "Valençay", o: ["Crottin de Chavignol", "Roquefort", "Comté"], subjectType: 'gastronomy', subjectName: 'Valençay' },
+                    { q: "The pairing of a light-bodied, high-acid wine with a light dish like poached fish is an example of pairing by what?", a: "Weight and intensity", o: ["Color", "Sweetness", "Tannin"], subjectType: 'wine_pairing', subjectName: 'Pairing Principles' },
+                    { q: "Which of these is a classic dish from the Bourbonnais region (where Saint-Pourçain is located)?", a: "Pâté aux pommes de terre (potato pie)", o: ["Ratatouille", "Salade Niçoise", "Boeuf Bourguignon"], subjectType: 'dish', subjectName: 'Pâté aux pommes de terre' },
+                    { q: "The name of the famous restaurant family that champions the wines of Côte Roannaise is:", a: "Troisgros", o: ["Bocuse", "Ducasse", "Robuchon"], subjectType: 'critic', subjectName: 'Troisgros' },
+                    { q: "Which of these is NOT a classic pairing for Central Loire Sauvignon Blanc?", a: "Rich, creamy blue cheese", o: ["Goat cheese", "Shellfish", "Dishes with fresh herbs"], subjectType: 'wine_pairing', subjectName: 'Sauvignon Blanc Pairings' },
+                    { q: "The zesty acidity of a young Gamay from Central France serves to...", a: "Cut through richness and refresh the palate", o: ["Add sweetness to a dish", "Soften the texture of meat", "Mimic the flavor of oak"], subjectType: 'wine_pairing', subjectName: 'Gamay Pairings' },
+                    { q: "A meal at a Sancerre bistro would almost certainly feature what on the menu?", a: "Crottin de Chavignol", o: ["Lobster Thermidor", "Beef Wellington", "Tiramisu"], subjectType: 'gastronomy', subjectName: 'Sancerre Bistros' },
+                    { q: "The herbal, 'nettle' note in some Sancerres is a good complement to what?", a: "Green vegetable dishes", o: ["Caramelized desserts", "Fatty red meat", "Spicy curries"], subjectType: 'wine_pairing', subjectName: 'Herbal Wine Pairings' },
+                    { q: "The light, non-aromatic character of Chasselas from Pouilly-sur-Loire makes it suitable as...", a: "An aperitif or with simple foods", o: ["A pairing for powerful game dishes", "A dessert wine", "A wine for long cellaring"], subjectType: 'wine_pairing', subjectName: 'Chasselas Pairings' },
+                    { q: "The Charolais cattle breed is from which nearby region, influencing the cuisine of Central France?", a: "Burgundy", o: ["Normandy", "Provence", "Alsace"], subjectType: 'gastronomy', subjectName: 'Charolais Cattle' },
+                    { q: "The pairing of a light red Sancerre with charcuterie is an example of what?", a: "A complementary pairing of weight and intensity", o: ["A contrasting pairing", "A sweet and savory pairing", "An incorrect pairing"], subjectType: 'wine_pairing', subjectName: 'Red Sancerre Pairings' },
+                    { q: "What is the key structural component in Central Loire white wines that makes them so food-friendly?", a: "High acidity", o: ["High alcohol", "High tannin", "High sugar"], subjectType: 'wine', subjectName: 'Loire Wine Structure' },
+                    { q: "Which local ingredient is a PDO and comes from the same area as Valençay AOP?", a: "Valençay goat cheese", o: ["Lentils from Le Puy", "Pork from Tours", "Apples from Normandy"], subjectType: 'ingredient', subjectName: 'Valençay Cheese' },
+                    { q: "The crispness of a Reuilly Blanc would be a good match for what seafood?", a: "Scallops with a citrus vinaigrette", o: ["Rich, buttery lobster", "Oily mackerel", "Spicy shrimp"], subjectType: 'wine_pairing', subjectName: 'Reuilly Blanc Pairings' },
+                    { q: "The culture of eating and drinking in the Loire is best described as...", a: "Focused on fresh, local, seasonal products", o: ["Focused on imported luxury goods", "Fast-paced and convenience-oriented", "Dominated by international cuisine"], subjectType: 'gastronomy', subjectName: 'Loire Gastronomy' }
+                ]
+            },
+            critic: {
+                title: "The Critic's Corner",
+                instructions: "Answer 10 multiple-choice questions about the vintages, producers, and market context of the Central Loire.",
+                questions: [
+                    { q: "Which iconic Pouilly-Fumé producer, known for his single-parcel 'Silex' bottling, was a pioneer of low yields and barrel fermentation?", a: "Didier Dagueneau", o: ["François Cotat", "Alphonse Mellot", "Pascal Jolivet"], subjectType: 'producer', subjectName: 'Didier Dagueneau' },
+                    { q: "The 2021 vintage in the Loire was characterized by what major challenge, resulting in very low yields?", a: "Severe spring frosts", o: ["Extreme heat and drought", "Widespread hail", "A perfect, easy growing season"], subjectType: 'vintage', subjectName: '2021 Loire Vintage' },
+                    { q: "Which Sancerre producer is a benchmark for traditional, powerful, and exceptionally age-worthy wines from sites like 'Les Monts Damnés'?", a: "François Cotat", o: ["Didier Dagueneau", "Henri Bourgeois", "Pascal Cotat"], subjectType: 'producer', subjectName: 'François Cotat' },
+                    { q: "How is the 2020 vintage generally described in the Loire?", a: "A warm, early, and excellent vintage with concentration and freshness", o: ["A cool, acidic, and challenging vintage", "A wet vintage with high disease pressure", "An average, unremarkable vintage"], subjectType: 'vintage', subjectName: '2020 Loire Vintage' },
+                    { q: "Which of these Sancerre producers is known for a larger, more international, and modern style?", a: "Henri Bourgeois", o: ["François Cotat", "Edmond Vatan", "Pascal Cotat"], subjectType: 'producer', subjectName: 'Henri Bourgeois' },
+                    { q: "The 2018 vintage in the Loire was noted for what characteristic?", a: "Exceptional ripeness and higher-than-average alcohol levels", o: ["Piercing acidity and lean profiles", "Underripe, green flavors", "Very low yields due to frost"], subjectType: 'vintage', subjectName: '2018 Loire Vintage' },
+                    { q: "Which producer's family has been making wine in Sancerre since 1513 and is a leader in biodynamic farming?", a: "Alphonse Mellot", o: ["Didier Dagueneau", "Pascal Jolivet", "Domaine Vacheron"], subjectType: 'producer', subjectName: 'Alphonse Mellot' },
+                    { q: "Which Sancerre producer is also a leader in biodynamics and known for its precise, terroir-driven wines?", a: "Domaine Vacheron", o: ["Henri Bourgeois", "Joseph Mellot", "Michel Redde"], subjectType: 'producer', subjectName: 'Domaine Vacheron' },
+                    { q: "How was the 2017 vintage impacted in the Loire?", a: "Severe frost damage reduced yields, but quality was promising.", o: ["It was a large, high-quality harvest.", "It was a complete washout due to rain.", "It was extremely hot, leading to overripe wines."], subjectType: 'vintage', subjectName: '2017 Loire Vintage' },
+                    { q: "Which producer is a quality leader in the Menetou-Salon appellation?", a: "Henry Pellé", o: ["Didier Dagueneau", "François Cotat", "Charles Joguet"], subjectType: 'producer', subjectName: 'Henry Pellé' },
+                    { q: "The 2019 vintage in the Loire resulted in very good quality but a notable lack of what style of wine?", a: "Sweet wines", o: ["Red wines", "Dry white wines", "Sparkling wines"], subjectType: 'vintage', subjectName: '2019 Loire Vintage' },
+                    { q: "Which family-run estate is a benchmark producer in Pouilly-Fumé, with a history spanning many generations?", a: "Michel Redde et Fils", o: ["François Cotat", "Alphonse Mellot", "Henry Pellé"], subjectType: 'producer', subjectName: 'Michel Redde' },
+                    { q: "Which of these is NOT considered one of the 'classic' Sancerre producers known for age-worthy, traditional wines?", a: "Pascal Jolivet", o: ["François Cotat", "Pascal Cotat", "Edmond Vatan"], subjectType: 'producer', subjectName: 'Sancerre Producers' },
+                    { q: "The 2016 vintage in Sancerre was considered:", a: "Very good quality and concentrated, despite frost", o: ["A poor vintage with unripe fruit", "An overly hot vintage", "A very large, dilute vintage"], subjectType: 'vintage', subjectName: '2016 Loire Vintage' },
+                    { q: "Which of these is a rising star in the Côte Roannaise, championed by the Troisgros restaurant family?", a: "Domaine Sérol", o: ["Didier Dagueneau", "Henry Pellé", "Domaine Vacheron"], subjectType: 'producer', subjectName: 'Domaine Sérol' },
+                    { q: "The 2015 vintage in the Loire is widely considered:", a: "Very promising and high quality across the region", o: ["A complete failure", "A cool and lean year", "A vintage for red wines only"], subjectType: 'vintage', subjectName: '2015 Loire Vintage' },
+                    { q: "Which AOP is, by a large margin, the most successful internationally in terms of both volume and value?", a: "Sancerre", o: ["Menetou-Salon", "Quincy", "Côte Roannaise"], subjectType: 'critic', subjectName: 'Sancerre Market' },
+                    { q: "The extremely hot 2003 vintage produced Sauvignon Blancs with what atypical characteristic?", a: "High alcohol (often 14%+) and low acidity", o: ["Extremely high acidity and green flavors", "Perfect balance and typicity", "Very low alcohol and dilute flavors"], subjectType: 'vintage', subjectName: '2003 Loire Vintage' },
+                    { q: "Didier Dagueneau's son, who now runs the iconic estate, is named:", a: "Louis-Benjamin Dagueneau", o: ["François Dagueneau", "Pascal Dagueneau", "Michel Dagueneau"], subjectType: 'producer', subjectName: 'Louis-Benjamin Dagueneau' },
+                    { q: "The 2014 vintage in the Loire is generally praised for producing what style of wines?", a: "Top quality, classic wines with good acidity", o: ["Overripe, high-alcohol wines", "Dilute, rain-affected wines", "Atypical, oxidative wines"], subjectType: 'vintage', subjectName: '2014 Loire Vintage' },
+                    { q: "The cost of vineyard land is highest by a significant margin in which AOP?", a: "Sancerre", o: ["Vouvray", "Muscadet", "Menetou-Salon"], subjectType: 'critic', subjectName: 'Sancerre Land Value' },
+                    { q: "Which producer is a leading and pioneering name in the Reuilly appellation?", a: "Denis Jamain (Domaine de Reuilly)", o: ["Alphonse Mellot", "Henry Pellé", "Didier Dagueneau"], subjectType: 'producer', subjectName: 'Denis Jamain' },
+                    { q: "The 2013 vintage in the Loire was considered:", a: "An 'annus horribilis' with cool conditions and low ripeness", o: ["A perfect, benchmark vintage", "A hot and powerful vintage", "An average, easy vintage"], subjectType: 'vintage', subjectName: '2013 Loire Vintage' },
+                    { q: "The critical reputation of the Central Vineyards is built almost entirely on which two grape varieties?", a: "Sauvignon Blanc and Pinot Noir", o: ["Chenin Blanc and Cabernet Franc", "Gamay and Chardonnay", "Melon and Grolleau"], subjectType: 'critic', subjectName: 'Central Vineyards Grapes' },
+                    { q: "Which of these is a highly-regarded producer in the Saint-Pourçain AOP?", a: "Domaine des Bérioles", o: ["François Cotat", "Domaine Sérol", "Denis Jamain"], subjectType: 'producer', subjectName: 'Domaine des Bérioles' },
+                    { q: "The 2012 vintage in the Central Vineyards was described as:", a: "Good, uniform ripeness with normal yields", o: ["A complete disaster with no usable fruit", "Extremely hot and overripe", "Very low-yielding due to hail"], subjectType: 'vintage', subjectName: '2012 Loire Vintage' },
+                    { q: "Which Sancerre single vineyard is among the most famous, known for its steep slopes and Kimmeridgian marl?", a: "Les Monts Damnés", o: ["Le Chêne Marchand", "Clos de la Poussie", "Les Romains"], subjectType: 'place', subjectName: 'Les Monts Damnés' },
+                    { q: "The 2010 vintage in the Central Vineyards produced Sauvignon Blancs that were:", a: "Delightful with good concentration and freshness", o: "Dilute and uninteresting", "Overripe and flabby", "Green and herbaceous"], subjectType: 'vintage', subjectName: '2010 Loire Vintage' },
+                    { q: "Since 2017, Domaine Didier Dagueneau has famously bottled its wines under what designation?", a: "Vin de France", o: ["Pouilly-Fumé AOP", "IGP Val de Loire", "Sancerre AOP"], subjectType: 'producer', subjectName: 'Didier Dagueneau' },
+                    { q: "Which vintage is described as a 'classic' year, producing wines with great balance and structure, the opposite of the opulent 2003?", a: "2002", o: ["2001", "2004", "2006"], subjectType: 'vintage', subjectName: '2002 Loire Vintage' },
+                    { q: "Which country is the most important export market for Sancerre?", a: "USA", o: ["UK", "Germany", "Belgium"], subjectType: 'critic', subjectName: 'Sancerre Market' },
+                    { q: "The 2009 vintage in the Central Vineyards was described as:", a: "A great vintage, with excellent, fully ripe fruit", o: ["A very cool and acidic vintage", "A rain-soaked vintage", "A low-yielding frost vintage"], subjectType: 'vintage', subjectName: '2009 Loire Vintage' },
+                    { q: "The single vineyard 'Le Chêne Marchand' is located in which commune of Sancerre?", a: "Bué", o: ["Chavignol", "Verdigny", "Sury-en-Vaux"], subjectType: 'place', subjectName: 'Le Chêne Marchand' },
+                    { q: "Which vintage was very difficult, with a July heatwave followed by cold, wet weather?", a: "2006", o: ["2005", "2007", "2008"], subjectType: 'vintage', subjectName: '2006 Loire Vintage' },
+                    { q: "Which Sancerre producer is famous for using incredibly high planting densities (20,000 vines/ha) for a specific rosé cuvée?", a: "Alphonse Mellot", o: ["François Cotat", "Domaine Vacheron", "Henri Bourgeois"], subjectType: 'producer', subjectName: 'Alphonse Mellot' },
+                    { q: "The 2008 vintage in the Loire was saved by what weather pattern?", a: "A dry but cool late summer and autumn", o: ["An intense heatwave in August", "Heavy rains in September", "An early, quick harvest"], subjectType: 'vintage', subjectName: '2008 Loire Vintage' },
+                    { q: "Which appellation is considered a high-quality, good-value alternative to Sancerre, with similar limestone soils?", a: "Menetou-Salon", o: ["Quincy", "Orléans", "Côte Roannaise"], subjectType: 'critic', subjectName: 'Menetou-Salon' },
+                    { q: "The 2005 vintage in the Loire is widely regarded as:", a: "Hot, dry, and very high quality", o: ["Cool, wet, and poor quality", "Average and unremarkable", "Good for whites, bad for reds"], subjectType: 'vintage', subjectName: '2005 Loire Vintage' },
+                    { q: "Which producer is known for making high-quality, characterful wines from the often-overlooked Pouilly-sur-Loire (Chasselas) AOP?", a: "Jonathan Pabiot", o: ["Didier Dagueneau", "Alphonse Mellot", "Henri Bourgeois"], subjectType: 'producer', subjectName: 'Jonathan Pabiot' },
+                    { q: "The 2001 vintage was considered poor for Sancerre and Pouilly-Fumé due to what factor?", a: "Late rain causing rot", o: ["Severe frost", "Extreme drought", "Widespread hail"], subjectType: 'vintage', subjectName: '2001 Loire Vintage' },
+                    { q: "What is the primary driver of Sancerre's premium price point in the market?", a: "High demand combined with limited supply and high land cost", o: ["Legally mandated minimum pricing", "Expensive oak aging for all wines", "High marketing costs"], subjectType: 'critic', subjectName: 'Sancerre Market' },
+                    { q: "The wines of which Central Vineyards AOP are known for being assertive, fruity, and zesty, grown on sand and gravel?", a: "Quincy", o: ["Sancerre", "Menetou-Salon", "Pouilly-Fumé"], subjectType: 'critic', subjectName: 'Quincy' },
+                    { q: "Which vintage produced ripe, concentrated wines with good acidity for all styles and is considered 'one for the cellar'?", a: "2022", o: ["2021", "2017", "2013"], subjectType: 'vintage', subjectName: '2022 Loire Vintage' },
+                    { q: "Which producer is a quality leader in the Coteaux du Giennois?", a: "Joseph Balland-Chapuis", o: ["Domaine Sérol", "Denis Jamain", "Henry Pellé"], subjectType: 'producer', subjectName: 'Joseph Balland-Chapuis' },
+                    { q: "The 2007 vintage in the Loire was uneven, but which style performed surprisingly well?", a: "Dry whites from all varieties", o: ["Red wines", "Sweet wines", "Sparkling wines"], subjectType: 'vintage', subjectName: '2007 Loire Vintage' },
+                    { q: "Which producer is known for a modern, clean, fruit-forward style across Sancerre and Pouilly-Fumé?", a: "Pascal Jolivet", o: ["François Cotat", "Edmond Vatan", "Nicolas Joly"], subjectType: 'producer', subjectName: 'Pascal Jolivet' },
+                    { q: "Which AOP has invested heavily in collective frost-protection systems like wind machines?", a: "Quincy", o: ["Sancerre", "Pouilly-Fumé", "Menetou-Salon"], subjectType: 'critic', subjectName: 'Quincy Frost Protection' },
+                    { q: "Which vintage is noted for being better for whites than for reds due to a cool, challenging summer?", a: "2021", o: ["2020", "2018", "2015"], subjectType: 'vintage', subjectName: '2021 Loire Vintage' },
+                    { q: "Which Sancerre pioneer is known for bottling wines based on soil type (Terres Blanches, Caillottes, Silex)?", a: "Domaine Vacheron", o: ["Didier Dagueneau", "François Cotat", "Pascal Jolivet"], subjectType: 'producer', subjectName: 'Domaine Vacheron' },
+                    { q: "Which vintage had a cool spring and mild summer, meaning many reds struggled to ripen?", a: "2013", o: ["2018", "2015", "2009"], subjectType: 'vintage', subjectName: '2013 Loire Vintage' }
+                ]
+            },
+        };
+
+        const flashcardData = {
+            historian: [
+                { q: "In what year did Grégoire of Tours make the first written reference to vineyards in the Sancerre area?", a: "582 CE" },
+                { q: "During the 14th century, which grape variety from Sancerre was considered among the best in the kingdom?", a: "Pinot Noir" },
+                { q: "In what year did the historian Pliny the Elder mention vines growing along the banks of the Loire?", a: "77 CE" },
+                { q: "What event in the late 19th century devastated the Loire's vineyards, leading to a major replanting and shift in grape varieties?", a: "The phylloxera crisis" },
+                { q: "In what year was the Sancerre AOP created, exclusively for Sauvignon Blanc wines?", a: "1936" },
+                { q: "In what year was the Quincy AOP established, becoming the second AOP in all of France?", a: "1936" },
+                { q: "In what year were the Pouilly-Fumé and Pouilly-sur-Loire AOPs established?", a: "1937" },
+                { q: "In what year was the Reuilly AOP established for white wines?", a: "1937" },
+                { q: "The Sancerre AOP was expanded to include red and rosé wines made from Pinot Noir in what year?", a: "1959" },
+                { q: "The Reuilly AOP was expanded to include red and rosé wines in what year?", a: "1961" },
+                { q: "In what year was the Menetou-Salon AOP created?", a: "1959" },
+                { q: "In what year was the Côte Roannaise AOP established?", a: "1994" },
+                { q: "In what year was the Coteaux du Giennois AOP elevated from VDQS status?", a: "1998" },
+                { q: "In what year was the Côtes du Forez AOP established?", a: "2000" },
+                { q: "In what year were the Orléans and Orléans-Cléry AOPs created?", a: "2006" },
+                { q: "In what year was the Saint-Pourçain AOP established?", a: "2009" },
+                { q: "In what year was the Côtes d'Auvergne AOP established?", a: "2010" },
+                { q: "In what year was the Châteaumeillant AOP established?", a: "2010" },
+                { q: "What was the historical grape of Sancerre before phylloxera?", a: "Pinot Noir" },
+                { q: "Who was the Roman officer and historian who first mentioned vines on the Loire's banks?", a: "Pliny the Elder" },
+                { q: "What powerful institution was a driving force in the development of the Loire's vineyards until the French Revolution?", a: "The Church (monastic orders)" },
+                { q: "In 1783, Sauvignon Blanc was first recorded as growing in Sancerre under what name?", a: "Sauvignon Fumé" },
+                { q: "After phylloxera, what lucrative table grape, desired in Paris, was widely replanted in Sancerre before being replaced by Sauvignon Blanc?", a: "Chasselas" },
+                { q: "Which famous 16th-century writer, born in Chinon, mentioned Sauvignon Blanc in his work 'Gargantua and Pantagruel'?", a: "François Rabelais" },
+                { q: "The opening of which canal in 1642 connected the Parisian market to Pouilly-Fumé's winemakers?", a: "The Briare Canal" },
+                { q: "The wines of which Central France AOP were highly prized by the papal court at Avignon in the 14th century?", a: "Saint-Pourçain" },
+                { q: "What technological innovation in the mid-19th century greatly increased demand for table grapes like Chasselas from Pouilly?", a: "The railway" },
+                { q: "The creation of the French AOP system in the 1930s was a response to phylloxera and what other crisis?", a: "Widespread wine fraud and adulteration" },
+                { q: "Which king's butler, Etienne I, was also the Count of Sancerre, helping to popularize the region's wines at the royal court?", a: "Louis VII" },
+                { q: "The 'Loire Volcanique' growers' association was formed in what year to promote the wines of Central France?", a: "2019" },
+                { q: "Who was the famous Paris wine merchant who, in 1816, praised Sancerre's red wines in his wine guide?", a: "André Jullien" },
+                { q: "The modern 'quality revolution' in the Loire, characterized by technological advancements like stainless steel, primarily took place in which decade?", a: "The 1980s" },
+                { q: "Who was the iconic, iconoclastic producer in Pouilly-Fumé who revolutionized Sauvignon Blanc starting in the 1980s?", a: "Didier Dagueneau" },
+                { q: "What was the historical motivation for replanting Sancerre with Sauvignon Blanc instead of Pinot Noir?", a: "Market demand from Parisian bistros for a crisp white wine." },
+                { q: "Viticulture in the Auvergne region dates to at least which century?", a: "1st century CE" },
+                { q: "The wines of St-Pourçain were famously served by which French king at a banquet in Saumur?", a: "King Louis IX" },
+                { q: "Which of the Central Loire appellations was a VDQS until 2011?", a: "Côtes d'Auvergne" },
+                { q: "Which of the Central Loire appellations was a VDQS until 1998?", a: "Coteaux du Giennois" },
+                { q: "What was the former quality designation that many Central Loire appellations held before becoming AOPs?", a: "Vin Délimité de Qualité Supérieure (VDQS)" },
+                { q: "The arrival of the railway in the 19th century eventually hurt the Chasselas table grape market in Pouilly by enabling competition from where?", a: "Southern France" },
+                { q: "What was the primary reason Sancerre Rouge fell out of favor after phylloxera?", a: "The shift in market preference towards white wines in Paris." },
+                { q: "Which historical event led to the decline of Orléans as a major wine region?", a: "The development of the railways, which favored wines from the south." },
+                { q: "Which city's parliament passed a law in 1577 prohibiting the purchase of wines made within a 20-league radius, benefiting the Loire?", a: "Paris" },
+                { q: "The reputation of Sancerre's white wines was already established by the 18th century, particularly from which village?", a: "Chavignol" },
+                { q: "Which Loire region's wines were being exported to England as early as the 12th century?", a: "Anjou" },
+                { q: "What was the primary mode of transport for Loire wines to Paris and export markets for centuries?", a: "The Loire River and its tributaries" },
+                { q: "Which Duke of Berry, who included Sancerre in his domain, was a major proponent of the area's Pinot Noir?", a: "John the Magnificent (Jean de Berry)" },
+                { q: "Which 19th-century invention ultimately led to the decline of many Loire regions that had benefited from waterway connections to Paris?", a: "The railways" },
+                { q: "Which US-based academic's report in the 1950s spurred a quality revolution in other parts of the world, mirroring the Loire's later focus on terroir?", a: "Dr. Harold Olmo (though his focus was California and Australia, the principle is the same)" },
+                { q: "The legal framework of the AOP system was created by which French governmental body?", a: "Institut National des Appellations d'Origine (INAO)" }
+            ],
+            terroir: [
+                { q: "The Central Vineyards (Sancerre, Pouilly-Fumé) are located on which major geological formation?", a: "The Paris Basin (Jurassic limestone)" },
+                { q: "The Central France vineyards (Côte Roannaise, etc.) are located on which major geological formation?", a: "The Massif Central (ancient volcanic and granitic rock)" },
+                { q: "What is the name for the Kimmeridgian clay-limestone marl soils in Sancerre?", a: "Terres Blanches" },
+                { q: "What is the name for the stony, fossil-rich limestone soils in Sancerre?", a: "Caillottes" },
+                { q: "What is the name for the flint-and-clay soils famous for giving Sauvignon Blanc a 'gunflint' aroma?", a: "Silex" },
+                { q: "What is the dominant soil type in the Gamay-focused AOPs of Côte Roannaise and Côtes du Forez?", a: "Granite" },
+                { q: "The vineyards of the Côtes d'Auvergne are uniquely characterized by what type of soil?", a: "Volcanic soils and ash deposits" },
+                { q: "What is the overall climate type of the Central Vineyards?", a: "Semi-Continental" },
+                { q: "What is the single greatest and most frequent viticultural threat in the Central Vineyards?", a: "Spring Frost" },
+                { q: "What major river separates Sancerre from Pouilly-Fumé?", a: "The Loire River" },
+                { q: "The vineyards of Quincy and Reuilly are located on ancient terraces of sand and what other component?", a: "Gravel" },
+                { q: "The vineyards of Saint-Pourçain are located near which Loire tributary?", a: "The Allier River" },
+                { q: "What is the typical altitude range for the vineyards in the Côte Roannaise?", a: "400 to 500 meters" },
+                { q: "The 'foehn' is a warm, dry wind that descends from the mountains in which part of the Loire?", a: "The upper Loire (Central France)" },
+                { q: "Which soil type in Sancerre is the coolest and slowest to ripen?", a: "Terres Blanches" },
+                { q: "Which soil type in Sancerre is the warmest and ripens earliest?", a: "Caillottes" },
+                { q: "Silex soils are found predominantly on which side of the Sancerre fault line?", a: "The eastern side, on slopes facing the river" },
+                { q: "Which Central France AOP has vineyards at altitudes of 350 to 550 meters?", a: "Côtes d'Auvergne" },
+                { q: "The soils of Menetou-Salon are primarily what type of rock from the Upper Jurassic period?", a: "Limestone" },
+                { q: "What is the dominant soil type in the Orléans AOP?", a: "Sandy-gravel" },
+                { q:g: "Which AOP is located just southwest of Quincy in the valley of the Arnon River?", a:"Reuilly"},
+                { q: "What is the parent material for the soils in Châteaumeillant AOP?", a: "Sandstone, schist, and gneiss" },
+                { q: "The hills of Sancerre provide a variety of what, which is crucial for viticulture?", a: "Aspects and exposures" },
+                { q: "The presence of Kimmeridgian marl links the terroir of Sancerre to which other famous French wine region?", a: "Chablis" },
+                { q: "The climate of Central France is influenced by both its southerly latitude and its what?", a: "High altitude" },
+                { q: "Which AOP has a narrow, 50-kilometer strip of vineyards on the right bank of the Loire, north of Pouilly-Fumé?", a: "Coteaux du Giennois" },
+                { q: "What is the parent rock of the soils in the Porongurup range in Australia, similar to that in parts of Central France?", a: "Granite" },
+                { q: "The Central Vineyards are located at approximately what parallel of latitude?", a: "The 47th parallel" },
+                { q: "Which AOP is located on a continuation of Sancerre's limestone soils, spreading southwest toward Bourges?", a: "Menetou-Salon" },
+                { q: "The Madeleine mountains shelter the vineyards of which AOP?", a: "Côte Roannaise" },
+                { q: "What is the primary topographical feature of Sancerre?", a: "Rolling hills" },
+                { q: "What are the three main soil types of Sancerre?", a: "Terres Blanches, Caillottes, and Silex" },
+                { q: "Which two AOPs are located on the banks of the Cher River?", a: "Quincy and Reuilly" },
+                { q: "The IGP Côtes de la Charité is located on what type of soils?", a: "Calcareous clay" },
+                { q: "What is the primary topographical difference between the Central Vineyards and Central France?", a: "Central France is at a significantly higher altitude." },
+                { q: "What is the primary risk associated with the continental climate of the Central Loire?", a: "Wide temperature variations, including frost" },
+                { q: "The 'Puy mountain chain' is a series of extinct volcanoes that define the terroir of which AOP?", a: "Côtes d'Auvergne" },
+                { q: "Which city is the namesake of the Coteaux du Giennois AOP?", a: "Gien" },
+                { q: "What is the primary benefit of the Loire River to the adjacent vineyards?", a: "It moderates temperatures and reduces frost risk." },
+                { q: "In which AOP does the 'Corent' cru sit on an old volcano?", a: "Côtes d'Auvergne" },
+                { q: "Which AOP is located between the Forez mountains and the Loire river?", a: "Côtes du Forez" },
+                { q: "The name 'Pouilly-Fumé' is derived from the 'smoky' bloom on the grapes and the gunflint aroma from which soil?", a: "Silex" },
+                { q: "The soils of the Central Vineyards are generally characterized by the presence of what?", a: "Limestone" },
+                { q: "The soils of Central France are generally characterized by being derived from what?", a: "Granitic and volcanic rock" },
+                { q: "Which Central Vineyards AOP is the flattest?", a: "Quincy" },
+                { q: "What kind of rock makes up the bedrock of Sancerre?", a: "Jurassic limestone" },
+                { q: "How does the climate change as you move east along the Loire valley toward the Central Vineyards?", a: "It becomes more continental and less maritime." },
+                { q: "What is the average altitude of the vineyards in Sancerre?", a: "250 to 350 meters" },
+                { q: "Which of the Central France AOPs is the most southerly?", a: "Côtes d'Auvergne" },
+                { q: "What geological event created the Sancerre fault, adding to the region's soil complexity?", a: "Tectonic faulting" }
+            ],
+            ampelographer: [
+                { q: "What is the sole white grape of Sancerre and Pouilly-Fumé?", a: "Sauvignon Blanc" },
+                { q: "What is the sole red grape of Sancerre and Menetou-Salon?", a: "Pinot Noir" },
+                { q: "What is the sole grape of Côte Roannaise and Côtes du Forez?", a: "Gamay" },
+                { q: "What grape is used to make the 'vin gris' of Reuilly?", a: "Pinot Gris" },
+                { q: "What is the sole grape of Pouilly-sur-Loire AOP?", a: "Chasselas" },
+                { q: "What grape variety must be the majority in red Orléans AOP?", a: "Pinot Meunier" },
+                { q: "What unique local white grape is blended with Chardonnay in Saint-Pourçain?", a: "Tressallier (Sacy)" },
+                { q: "What is the sole white grape of Côtes d'Auvergne AOP?", a: "Chardonnay" },
+                { q: "What was the dominant grape in Sancerre before phylloxera?", a: "Pinot Noir" },
+                { q: "What is the preferred, peppery clone of Gamay in the Côte Roannaise?", a: "Gamay Saint-Romain" },
+                { q: "What is the sole grape of the red-wine-only Orléans-Cléry AOP?", a: "Cabernet Franc" },
+                { q: "Red and rosé Coteaux du Giennois is a blend of Gamay and what other grape?", a: "Pinot Noir" },
+                { q: "What is the historical synonym for Sauvignon Blanc in Pouilly?", a: "Blanc Fumé" },
+                { q: "Which grape variety is known for its pungent herbaceous notes of gooseberry and nettle?", a: "Sauvignon Blanc" },
+                { q: "Which grape is known for being early-budding and susceptible to spring frosts?", a: "Pinot Noir" },
+                { q: "Sauvignon Blanc is a cross between Savagnin and what other grape?", a: "Its other parent is unknown." },
+                { q: "The rosés of Saint-Pourçain AOP must be 100% what?", a: "Gamay" },
+                { q: "The white wines of Valençay AOP must be at least 70% what?", a: "Sauvignon Blanc" },
+                { q: "Tressallier, found in Saint-Pourçain, is also known by what name?", a: "Sacy" },
+                { q: "Which grape variety's small, tight bunches make it susceptible to botrytis?", a: "Sauvignon Blanc" },
+                { q: "Which grape is the only one permitted for red wines in Reuilly?", a: "Pinot Noir" },
+                { q: "In the 16th century, writer François Rabelais referred to Sauvignon Blanc by what name?", a: "Fiers" },
+                { q: "Which Swiss-derived cross of Gamay is sometimes found in IGP d'Urfé?", a: "Gamaret" },
+                { q: "What is the most planted red grape variety in the Central Vineyards?", a: "Pinot Noir" },
+                { q: "What is the most planted grape variety overall in the Central Vineyards?", a: "Sauvignon Blanc" },
+                { q: "The 'Corent' cru of Côtes d'Auvergne is for rosé made from a blend of Gamay and what?", a: "Pinot Noir" },
+                { q: "What grape variety is known for being very vigorous and requiring careful canopy management?", a: "Sauvignon Blanc" },
+                { q: "Which grape must be the majority in the red blends of Saint-Pourçain?", a: "Gamay" },
+                { q: "The red wines of Valençay must contain Gamay, Pinot Noir, and what other grape?", a: "Côt (Malbec)" },
+                { q: "Which grape is a parent of both Chardonnay and Gamay?", a: "Gouais Blanc" },
+                { q: "Which AOP is the only one in the Loire to have its own appellation for Chasselas?", a: "Pouilly-sur-Loire" },
+                { q: "Which grape variety is authorized in the IGP Côtes de la Charité but is the signature of Muscadet?", a: "Melon B" },
+                { q: "What is the only red grape allowed in Menetou-Salon?", a: "Pinot Noir" },
+                { q: "Which AOP's white wines are a blend of Chardonnay and Pinot Gris?", a: "Orléans" },
+                { q: "Which grape is NOT permitted in the red blends of Coteaux du Giennois?", a: "Cabernet Franc" },
+                { q: "Which grape is the only one permitted in Quincy AOP?", a: "Sauvignon Blanc" },
+                { q: "Which grape variety accounts for around 15% of production in the Central Vineyards area?", a: "Pinot Noir" },
+                { q: "Which grape is NOT a permitted grape for red Châteaumeillant?", a: "Syrah" },
+                { q: "Which grape variety, other than Sauvignon Blanc, is permitted in white Valençay?", a: "Chardonnay" },
+                { q: "The red wines of Côtes d'Auvergne must be a minimum of 50% what?", a: "Gamay" },
+                { q: "What is the most planted grape variety in the Côte Roannaise?", a: "Gamay" },
+                { q: "What is the most planted grape variety in the Côtes du Forez?", a: "Gamay" },
+                { q: "The red wines of Saint-Pourçain are a blend of Pinot Noir and what other grape?", a: "Gamay" },
+                { q: "Which grape must constitute 70-90% of the red Orléans AOP blend?", a: "Pinot Meunier" },
+                { q: "Which white grape, other than Chardonnay and Tressallier, is permitted up to 10% in Saint-Pourçain Blanc?", a: "Sauvignon Blanc" },
+                { q: "Which AOP allows for a 'vin gris' made from Pinot Gris?", a: "Reuilly" },
+                { q: "What is the only grape permitted in white Menetou-Salon?", a: "Sauvignon Blanc" },
+                { q: "Which grape variety is known for its high natural acidity, making it suitable for both dry and sparkling wines?", a: "Sauvignon Blanc" },
+                { q: "Which grape, grown in the Central Vineyards, is a parent of Cabernet Sauvignon?", a: "Sauvignon Blanc" },
+                { q: "Which grape is a key variety in Beaujolais but also the star of Côte Roannaise?", a: "Gamay" }
+            ],
+            lawmaker: [
+                { q: "What is the maximum base yield for Sancerre Blanc AOP in hl/ha?", a: "65 hl/ha" },
+                { q: "Which of these AOPs is legally for white wine only?", a: "Quincy" },
+                { q: "In Coteaux du Giennois AOP, what is the rule for blending Pinot Noir and Gamay in red wines?", a: "Neither grape may exceed 80% of the blend." },
+                { q: "Which AOP is legally reserved for wines made from 100% Chasselas?", a: "Pouilly-sur-Loire" },
+                { q: "What is the minimum planting density for Sancerre AOP?", a: "6,100 vines per hectare" },
+                { q: "Which of these AOPs was the first in the Loire to be established, in August 1936?", a: "Quincy" },
+                { q: "Red wines from Orléans AOP must contain what proportion of Pinot Meunier?", a: "70-90%" },
+                { q: "What is the maximum base yield for Sancerre Rouge AOP in hl/ha?", a: "59 hl/ha" },
+                { q: "Which of these AOPs is legally permitted to produce red, white, and rosé wines?", a: "Menetou-Salon" },
+                { q: "What is the mandatory release date for Sancerre Rouge?", a: "Not before March 15th of the year following the harvest" },
+                { q: "What is the maximum base yield for Côte Roannaise AOP?", a: "55 hl/ha" },
+                { q: "In Saint-Pourçain AOP, what is the required proportion of Chardonnay in white wines?", a: "50-80%" },
+                { q: "Which of these Central France AOPs is legally for red and rosé wines only?", a: "Côtes du Forez" },
+                { q: "What is the minimum potential alcohol for Sancerre Blanc?", a: "10.5%" },
+                { q: "Which AOP is for red wine only and must be made from 100% Cabernet Franc?", a: "Orléans-Cléry" },
+                { q: "In Reuilly, which grape is NOT permitted for rosé wines?", a: "Gamay" },
+                { q: "What is the maximum residual sugar for a dry Sancerre Blanc?", a: "4 g/l" },
+                { q: "Which AOP's sub-zone 'Corent' is legally authorized for rosé production only?", a: "Côtes d'Auvergne" },
+                { q: "What is the minimum planting density for Pouilly-Fumé AOP?", a: "6,000 vines per hectare" },
+                { q: "When was the Sancerre AOP expanded to include red and rosé wines?", a: "1959" },
+                { q: "What is the maximum base yield for Quincy AOP?", a: "65 hl/ha" },
+                { q: "The rosé wines of Saint-Pourçain AOP must be 100% of which grape?", a: "Gamay" },
+                { q: "In the red blend of Saint-Pourçain, what is the required proportion of Gamay?", a: "40-75%" },
+                { q: "White wines of Côtes d'Auvergne AOP are legally required to be 100% of what grape?", a: "Chardonnay" },
+                { q: "What is the maximum base yield for red Menetou-Salon?", a: "59 hl/ha" },
+                { q: "The white wines of Orléans AOP are a blend of Chardonnay and what other grape?", a: "Pinot Gris" },
+                { q: "What is the minimum potential alcohol for Pouilly-sur-Loire AOP?", a: "9.5%" },
+                { q: "Which of these AOPs has the highest minimum planting density?", a: "Sancerre (6,100 vines/ha)" },
+                { q: "In Quincy AOP, what is the maximum permitted percentage of Sauvignon Gris?", a: "10%" },
+                { q: "Which Central Vineyards AOP was promoted from VDQS status in 1998?", a: "Coteaux du Giennois" },
+                { q: "What is the minimum must weight (in g/l) for Sancerre Rouge?", a: "175 g/l" },
+                { q: "What is the maximum base yield for rosé Menetou-Salon?", a: "63 hl/ha" },
+                { q: "When was the Orléans AOP officially created?", a: "2006" },
+                { q: "Is it legal to blend Chardonnay into Sancerre Blanc AOP?", a: "No" },
+                { q: "What is the maximum base yield for Côtes du Forez?", a: "55 hl/ha" },
+                { q: "The red wines of Valençay AOP must contain Gamay, Pinot Noir, and what other grape?", a: "Côt (Malbec)" },
+                { q: "What is the maximum residual sugar for a rosé from Reuilly AOP?", a: "4 g/l" },
+                { q: "Which AOP was officially established in 1994?", a: "Côte Roannaise" },
+                { q: "What is the minimum percentage of Gamay in a red blend from Saint-Pourçain?", a: "40%" },
+                { q: "Which of these is NOT a commune of production for Sancerre?", a: "Pouilly-sur-Loire" },
+                { q: "What is the maximum base yield for the sub-zones of Côtes d'Auvergne?", a: "52 hl/ha" },
+                { q: "Can Sauvignon Gris be planted to make white Menetou-Salon?", a: "No, only if the vines were planted before 2009." },
+                { q: "What is the minimum potential alcohol for Coteaux du Giennois Blanc?", a: "10.5%" },
+                { q: "In which AOP can you legally find a red wine made from 100% Pinot Meunier?", a: "This is not legal in any AOP; Orléans requires a blend." },
+                { q: "What is the minimum percentage of Tressallier required in a Saint-Pourçain Blanc?", a: "20%" },
+                { q: "Which of these AOPs allows for the production of 'vin gris'?", a: "Reuilly" },
+                { q: "What is the maximum yield for white Reuilly?", a: "65 hl/ha" },
+                { q: "Which AOP requires its red wines to be aged until at least September 1st of the year following harvest?", a: "Anjou-Villages" },
+                { q: "What is the minimum alcohol content for a red wine from the sub-zones of Côtes d'Auvergne?", a: "11%" },
+                { q: "Is chaptalization permitted for Sancerre AOP?", a: "Yes, within legal limits." }
+            ],
+            gastronome: [
+                { q: "Which world-famous goat cheese from the village of Chavignol is the classic pairing for Sancerre?", a: "Crottin de Chavignol" },
+                { q: "The Valençay AOP is a protected designation for both wine and what other product?", a: "Goat cheese" },
+                { q: "A crisp Sauvignon Blanc from Quincy or Reuilly is a classic match for what type of food?", a: "Freshwater fish from the Loire and Cher rivers" },
+                { q: "A light, peppery Gamay from Côte Roannaise is a traditional bistro pairing for what?", a: "Charcuterie, such as saucisson" },
+                { q: "The pairing of Sancerre and Crottin de Chavignol is a textbook example of which pairing principle?", a: "'What grows together, goes together'" },
+                { q: "A light, fruity red Sancerre (Pinot Noir) would pair well with what type of dish?", a: "Roasted chicken or turkey" },
+                { q: "The high acidity of a Central Loire Sauvignon Blanc serves what purpose when paired with rich food?", a: "It cuts through the fat and cleanses the palate." },
+                { q: "Which cheese, shaped like a truncated pyramid and coated in ash, shares its AOP with local wines?", a: "Valençay" },
+                { q: "The smoky, 'gunflint' notes of a Pouilly-Fumé from silex soils would be an interesting match for what?", a: "Smoked salmon or trout" },
+                { q: "The rustic, hearty cuisine of the Auvergne region would best be paired with which local wine?", a: "A red wine from Côtes d'Auvergne (Gamay/Pinot Noir)" },
+                { q: "What is the name of the famous restaurant family that has long championed the wines of Côte Roannaise?", a: "Troisgros" },
+                { q: "The herbal, 'nettle' note in some Sancerres can be a good complement to what difficult-to-pair vegetable?", a: "Asparagus" },
+                { q: "The light-bodied, non-aromatic Chasselas from Pouilly-sur-Loire is best enjoyed as...", a: "An aperitif or with simple poached fish" },
+                { q: "The zesty, citrus character of a Menetou-Salon Blanc is a good match for dishes with what kind of sauce?", a: "Lemon-butter sauce" },
+                { q: "The peppery quality of Gamay Saint-Romain from Côte Roannaise would complement what seasoning in a dish?", a: "Black pepper" },
+                { q: "Which famous PDO lentil comes from the Auvergne region?", a: "Lentilles vertes du Puy" },
+                { q: "A 'vin gris' from Reuilly, with its pale color, is an ideal aperitif or partner for...", a: "Light salads or grilled shellfish" },
+                { q: "The pairing of an acidic wine with an acidic food like goat cheese is an example of what type of pairing?", a: "Complementary" },
+                { q: "Which famous French dish features cheesy mashed potatoes from the Auvergne?", a: "Aligot" },
+                { q: "The elegant Pinot Noir from Menetou-Salon would pair well with what type of meat?", a: "Duck or other game birds" },
+                { q: "The proximity to what major city heavily influenced the culinary tradition of the Central Vineyards?", a: "Paris" },
+                { q: "The light, fruity red from Coteaux du Giennois is a classic match for...", a: "A picnic with cold cuts and pâté" },
+                { q: "A dry rosé from Sancerre is a versatile wine that pairs well with...", a: "Summer salads and grilled vegetables" },
+                { q: "Charolais beef, a famous product from nearby Burgundy, pairs well with the red wines of which AOP?", a: "Saint-Pourçain" },
+                { q: "What is the key structural component in Central Loire whites that makes them so food-friendly?", a: "High acidity" },
+                { q: "Which of these is a famous potato pie from the Bourbonnais region (Saint-Pourçain)?", a: "Pâté aux pommes de terre" },
+                { q: "Which of these is NOT a classic pairing for Central Loire Sauvignon Blanc?", a: "Rich, creamy blue cheese" },
+                { q: "The fine tannins and red fruit of a Sancerre Rouge complement the flavors of...", a: "Mushrooms and earthy dishes" },
+                { q: "The simple cuisine of the Sancerrois is best described as...", a: "Farm-based and focused on high-quality local products" },
+                { q: "Which oak forest, famous for barrel making, is located in the Allier department near Saint-Pourçain?", a: "Tronçais" },
+                { q: "A light Chardonnay from Côtes d'Auvergne would be a good match for what?", a: "Pan-seared trout" },
+                { q: "Which of these is NOT a PDO goat cheese from the Loire Valley?", a: "Pélardon" },
+                { q: "The pairing of a light-bodied Gamay with a simple sausage is an example of pairing by what?", a: "Weight and intensity" },
+                { q: "The mineral character of a Pouilly-Fumé is a great match for what kind of seafood?", a: "Oysters or clams" },
+                { q: "The style of cuisine in Central France (Auvergne, Forez) is influenced by its...", a: "Mountainous, inland location" },
+                { q: "Which of these is a classic flavor note in a young red Sancerre?", a: "Red cherry" },
+                { q: "The crispness of a Reuilly Blanc would pair well with a dish featuring what herb?", a: "Tarragon" },
+                { q: "The light spice of a Pinot Meunier from Orléans would match well with...", a: "Pork dishes" },
+                { q: "The gastronomic culture of the Loire Valley is often referred to as the...", a: "'Garden of France'" },
+                { q: "Which cheese AOP shares its name with a wine AOP that produces red, white, and rosé styles?", a: "Valençay" },
+                { q: "The pairing of a light-bodied red with charcuterie is successful because the wine's acidity...", a: "Cuts through the fat of the meat" },
+                { q: "Which of these is NOT a typical flavor in a Sancerre Blanc?", a: "Butter and vanilla" },
+                { q: "A hearty lentil soup from Auvergne would pair well with a rustic red from...", a: "Côtes d'Auvergne" },
+                { q: "The village of Chavignol is famous for its wine and what else?", a: "Goat cheese" },
+                { q: "Which of these is a common preparation for freshwater fish from the Loire?", a: "Pan-fried with beurre blanc" },
+                { q: "The 'gunflint' note in Pouilly-Fumé is a type of what aroma?", a: "Mineral" },
+                { q: "A Gamay from Côtes du Forez, with its bright fruit, is a good match for what?", a: "A cheeseboard with semi-hard cheeses" },
+                { q: "The red wines from Orléans-Cléry (Cabernet Franc) would pair well with...", a: "Grilled vegetables and white meats" },
+                { q: "Which of these is a classic flavor profile of Crottin de Chavignol cheese?", a: "Tangy, nutty, and goaty" },
+                { q: "The success of the Sancerre/Crottin de Chavignol pairing relies on matching high levels of what in both wine and cheese?", a: "Acidity" }
+            ],
+            critic: [
+                { q: "Which producer is considered the ultimate 'icon' of Pouilly-Fumé, a pioneer of low yields and barrel fermentation?", a: "Didier Dagueneau", o: ["François Cotat", "Alphonse Mellot", "Pascal Jolivet"], subjectType: 'producer', subjectName: 'Didier Dagueneau' },
+                { q: "The 2021 vintage in the Central Loire is defined by what major characteristic?", a: "Very low yields due to severe spring frost, producing acidic whites.", o: ["A hot, powerful year with high alcohol.", "A large, dilute harvest.", "A perfect, balanced year."], subjectType: 'vintage', subjectName: '2021 Loire Vintage' },
+                { q: "Which Sancerre producer is a benchmark for powerful, traditional, and exceptionally age-worthy wines from 'Les Monts Damnés'?", a: "François Cotat", o: ["Henri Bourgeois", "Pascal Jolivet", "Domaine Vacheron"], subjectType: 'producer', subjectName: 'François Cotat' },
+                { q: "How is the 2020 vintage generally described by critics?", a: "Excellent, warm, and early, with concentration and freshness", o: ["Cool, lean, and acidic", "Rainy and challenging", "Average and forgettable"], subjectType: 'vintage', subjectName: '2020 Loire Vintage' },
+                { q: "Which large Sancerre producer has properties in both Marlborough, New Zealand, and Sancerre?", a: "Henri Bourgeois", o: ["Alphonse Mellot", "Domaine Vacheron", "Pascal Jolivet"], subjectType: 'producer', subjectName: 'Henri Bourgeois' },
+                { q: "The 2018 vintage was noted for what characteristic in its wines?", a: "Exceptional ripeness and higher alcohol levels", o: ["High acidity and green notes", "Low concentration due to rain", "A classic, lean profile"], subjectType: 'vintage', subjectName: '2018 Loire Vintage' },
+                { q: "Which producer, with a history in Sancerre since 1513, is a leader in biodynamic farming?", a: "Alphonse Mellot", o: ["Didier Dagueneau", "Pascal Jolivet", "Michel Redde"], subjectType: 'producer', subjectName: 'Alphonse Mellot' },
+                { q: "Which Sancerre domaine is also a leader in biodynamics, known for its precise, single-soil bottlings?", a: "Domaine Vacheron", o: ["Joseph Mellot", "Henri Bourgeois", "Domaine de la Perrière"], subjectType: 'producer', subjectName: 'Domaine Vacheron' },
+                { q: "The 2017 vintage was severely impacted by frost, but the remaining grapes had what quality?", a: "Good ripeness and slightly lower acidity", o: ["High acidity and underripe flavors", "Rot and dilution", "Atypical flavors"], subjectType: 'vintage', subjectName: '2017 Loire Vintage' },
+                { q: "Which producer is a quality benchmark in the Menetou-Salon appellation?", a: "Henry Pellé", o: ["Didier Dagueneau", "François Cotat", "Domaine Sérol"], subjectType: 'producer', subjectName: 'Henry Pellé' },
+                { q: "The 2019 vintage was very good to excellent for dry wines but lacked what style due to September rains?", a: "Sweet wines", o: ["Red wines", "Rosé wines", "Sparkling wines"], subjectType: 'vintage', subjectName: '2019 Loire Vintage' },
+                { q: "Which family-run estate is a benchmark producer in Pouilly-Fumé, spanning many generations?", a: "Michel Redde et Fils", o: ["François Cotat", "Alphonse Mellot", "Domaine Vacheron"], subjectType: 'producer', subjectName: 'Michel Redde' },
+                { q: "The 2016 vintage in Sancerre was considered what, despite frost losses?", a: "Good quality and concentrated", o: ["Poor and unripe", "Overly hot and alcoholic", "Dilute and weak"], subjectType: 'vintage', subjectName: '2016 Loire Vintage' },
+                { q: "Which rising star producer in Côte Roannaise is championed by the Troisgros restaurant?", a: "Domaine Sérol", o: ["Henry Pellé", "Denis Jamain", "Domaine des Bérioles"], subjectType: 'producer', subjectName: 'Domaine Sérol' },
+                { q: "The 2015 vintage in the Loire is widely considered to be...", a: "Very promising and high quality for all styles", o: ["A failure due to rain", "A cool and lean vintage", "A year for red wines only"], subjectType: 'vintage', subjectName: '2015 Loire Vintage' },
+                { q: "Which AOP is the most successful internationally in terms of both volume and value?", a: "Sancerre", o: ["Menetou-Salon", "Quincy", "Côte Roannaise"], subjectType: 'critic', subjectName: 'Sancerre Market' },
+                { q: "The extremely hot 2003 vintage produced Sauvignon Blanc with what atypical feature?", a: "High alcohol and low acidity", o: ["High acidity and green flavors", "Perfect balance", "Low alcohol"], subjectType: 'vintage', subjectName: '2003 Loire Vintage' },
+                { q: "Who is the son of Didier Dagueneau, now running the iconic estate?", a: "Louis-Benjamin Dagueneau", o: ["François Dagueneau", "Pascal Dagueneau", "Michel Dagueneau"], subjectType: 'producer', subjectName: 'Louis-Benjamin Dagueneau' },
+                { q: "The 2014 vintage is praised for producing what style of wines?", a: "Top quality, classic wines with good acidity", o: ["Overripe, powerful wines", "Dilute, weak wines", "Atypical, oxidative wines"], subjectType: 'vintage', subjectName: '2014 Loire Vintage' },
+                { q: "The cost of vineyard land is highest by a significant margin in which AOP?", a: "Sancerre", o: ["Menetou-Salon", "Reuilly", "Saint-Pourçain"], subjectType: 'critic', subjectName: 'Sancerre Land Value' },
+                { q: "Which producer is a quality leader in the Reuilly appellation, known for organic viticulture?", a: "Denis Jamain (Domaine de Reuilly)", o: ["Alphonse Mellot", "Henry Pellé", "Domaine Sérol"], subjectType: 'producer', subjectName: 'Denis Jamain' },
+                { q: "The 2013 vintage was described as an 'annus horribilis' because...", a: "Reds struggled to achieve full ripeness", o: ["Of a perfect, large harvest", "Of extreme heat", "Of a widespread drought"], subjectType: 'vintage', subjectName: '2013 Loire Vintage' },
+                { q: "The 'Les Monts Damnés' is a famous single vineyard in which Sancerre commune?", a: "Chavignol", o: ["Bué", "Verdigny", "Sury-en-Vaux"], subjectType: 'place', subjectName: 'Les Monts Damnés' },
+                { q: "The 2012 vintage in the Central Vineyards was described as...", a: "Having good, uniform ripeness", o: ["A complete disaster", "Extremely hot", "Low in acidity"], subjectType: 'vintage', subjectName: '2012 Loire Vintage' },
+                { q: "Which of these is a highly-regarded producer in Saint-Pourçain?", a: "Domaine des Bérioles", o: ["François Cotat", "Domaine Sérol", "Denis Jamain"], subjectType: 'producer', subjectName: 'Domaine des Bérioles' },
+                { q: "Since the 2017 vintage, the wines of Domaine Didier Dagueneau have been bottled under what designation?", a: "Vin de France", o: ["Pouilly-Fumé AOP", "IGP Val de Loire", "Sancerre AOP"], subjectType: 'producer', subjectName: 'Didier Dagueneau' },
+                { q: "Which vintage is described as 'classic' and the stylistic opposite of the opulent 2003?", a: "2002", o: ["2001", "2004", "2006"], subjectType: 'vintage', subjectName: '2002 Loire Vintage' },
+                { q: "Which AOP is considered a high-quality, good-value alternative to its more famous neighbor, Sancerre?", a: "Menetou-Salon", o: ["Quincy", "Orléans", "Côte Roannaise"], subjectType: 'critic', subjectName: 'Menetou-Salon' },
+                { q: "The 2010 vintage in the Central Vineyards was praised for what characteristic in its Sauvignon Blancs?", a: "Good concentration and freshness", o: ["High alcohol and low acid", "Dilution from rain", "Green, underripe flavors"], subjectType: 'vintage', subjectName: '2010 Loire Vintage' },
+                { q: "Which Sancerre producer is famous for using extremely high planting densities for a specific rosé cuvée?", a: "Alphonse Mellot", o: ["François Cotat", "Domaine Vacheron", "Henri Bourgeois"], subjectType: 'producer', subjectName: 'Alphonse Mellot' },
+                { q: "The 2008 vintage was saved by what weather pattern?", a: "A dry but cool late summer and autumn", o: ["An intense heatwave", "Heavy September rains", "An early harvest"], subjectType: 'vintage', subjectName: '2008 Loire Vintage' },
+                { q: "Which producer is known for making high-quality, characterful wines from the often-overlooked Chasselas grape in Pouilly-sur-Loire?", a: "Jonathan Pabiot", o: ["Didier Dagueneau", "Alphonse Mellot", "Pascal Jolivet"], subjectType: 'producer', subjectName: 'Jonathan Pabiot' },
+                { q: "The 2009 vintage in the Loire is described as...", a: "A great vintage with healthy, fully ripe fruit", o: ["A cool and acidic vintage", "A rain-soaked vintage", "A low-yielding frost vintage"], subjectType: 'vintage', subjectName: '2009 Loire Vintage' },
+                { q: "Which vintage was very difficult due to a July heatwave followed by cold, wet weather?", a: "2006", o: ["2005", "2007", "2008"], subjectType: 'vintage', subjectName: '2006 Loire Vintage' },
+                { q: "The 2005 vintage is widely regarded as...", a: "Hot, dry, and very high quality", o: ["Cool, wet, and poor quality", "Average and unremarkable", "Good for whites, bad for reds"], subjectType: 'vintage', subjectName: '2005 Loire Vintage' },
+                { q: "The 2001 vintage was poor for Sancerre due to what?", a: "Late rain causing rot", o: ["Severe frost", "Extreme drought", "Widespread hail"], subjectType: 'vintage', subjectName: '2001 Loire Vintage' },
+                { q: "Which appellation has collectively invested in a large number of wind machines for frost protection?", a: "Quincy", o: ["Sancerre", "Pouilly-Fumé", "Menetou-Salon"], subjectType: 'critic', subjectName: 'Quincy' },
+                { q: "Which of these producers is known for a modern, fruit-forward style across Sancerre and Pouilly-Fumé?", a: "Pascal Jolivet", o: ["François Cotat", "Edmond Vatan", "Pascal Cotat"], subjectType: 'producer', subjectName: 'Pascal Jolivet' },
+                { q: "Which vintage is described as a 'classic' vintage with good uniform ripeness and concentration?", a: "2004", o: ["2003", "2006", "2013"], subjectType: 'vintage', subjectName: '2004 Loire Vintage' },
+                { q: "The 2022 vintage is described as 'one for the cellar' because the wines have...", a: "Concentration and good acidity", o: ["Low alcohol and light body", "Simple fruit flavors for early drinking", "High sugar and low acidity"], subjectType: 'vintage', subjectName: '2022 Loire Vintage' },
+                { q: "Which famous Sancerre vineyard's name translates to 'The Damned Mountains'?", a: "Les Monts Damnés", o: ["Le Chêne Marchand", "La Grande Côte", "Les Culs de Beaujeu"], subjectType: 'place', subjectName: 'Les Monts Damnés' },
+                { q: "A wine critic describing a Sancerre as having notes of 'gooseberry, nettle, and wet stone' is describing a...", a: "Classic, traditional style", o: ["Modern, oak-aged style", "Overripe, hot-vintage style", "Atypical, flawed style"], subjectType: 'wine_style', subjectName: 'Classic Sancerre' },
+                { q: "Which country is the second-most important export market for Loire Valley wines overall?", a: "UK", o: ["USA", "Germany", "Canada"], subjectType: 'critic', subjectName: 'Loire Market' },
+                { q: "A wine from the 'Le Chêne Marchand' vineyard in Sancerre comes from which commune?", a: "Bué", o: ["Chavignol", "Verdigny", "Sury-en-Vaux"], subjectType: 'place', subjectName: 'Le Chêne Marchand' },
+                { q: "The critical consensus is that climate change has had what positive effect on Central Loire Pinot Noir?", a: "It allows for more reliable ripening and richer styles.", o: ["It has made the wines lighter and more acidic.", "It has had no effect.", "It has made the grape impossible to grow."], subjectType: 'critic', subjectName: 'Climate Change Impact' },
+                { q: "Which of these is NOT considered one of the 'Big Three' soil types of Sancerre?", a: "Gabbro", o: ["Terres Blanches", "Caillottes", "Silex"], subjectType: 'terroir', subjectName: 'Sancerre Soils' },
+                { q: "Which producer is a quality leader in the Coteaux du Giennois?", a: "Joseph Balland-Chapuis", o: ["Domaine Sérol", "Denis Jamain", "Henry Pellé"], subjectType: 'producer', subjectName: 'Joseph Balland-Chapuis' },
+                { q: "The 2007 vintage was uneven, but which style performed surprisingly well?", a: "Dry whites", o: ["Reds", "Sweet wines", "Rosés"], subjectType: 'vintage', subjectName: '2007 Loire Vintage' },
+                { q: "The wines of which AOP are generally rounder and softer than those of Quincy due to warmer conditions?", a: "Reuilly", o: ["Sancerre", "Menetou-Salon", "Pouilly-Fumé"], subjectType: 'critic', subjectName: 'Reuilly' },
+                { q: "What is the primary factor limiting the expansion of the Sancerre AOP?", a: "The high cost of land and limited availability", o: ["Lack of demand", "Unsuitable climate", "Strict government quotas"], subjectType: 'critic', subjectName: 'Sancerre Expansion' }
+            ],
+        };
+
+        const mainMenu = document.getElementById('main-menu');
+        const gameScreen = document.getElementById('game-screen');
+        const modalContainer = document.getElementById('modal-container');
+        const modalContentWrapper = document.getElementById('modal-content-wrapper');
+        const aiSettingsBtn = document.getElementById('ai-settings-btn');
+
+        let currentModule;
+        let currentQuestionIndex;
+        let score;
+        let questions = [];
+        let userTimeline = [];
+        let historianAvailableEvents = [];
+        let flashcardDeck = [];
+        let currentFlashcardIndex = 0;
+        let userApiKey = localStorage.getItem('geminiApiKey') || '';
+
+        // --- Event Listeners ---
+        document.querySelectorAll('.module-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const module = button.dataset.module;
+                if (module === 'flashcard') {
+                    showFlashcardTopicSelection();
+                } else {
+                    showInstructionalModal(module);
+                }
+            });
+        });
+
+        aiSettingsBtn.addEventListener('click', showAiSettingsModal);
+    	
+        // --- Modal Functions ---
+        function showModal(content) {
+            modalContentWrapper.innerHTML = content;
+            modalContainer.classList.remove('hidden');
+        }
+
+        function hideModal() {
+            modalContainer.classList.add('hidden');
+            modalContentWrapper.innerHTML = '';
+        }
+    	
+        function showWelcomeModal() {
+            if (sessionStorage.getItem('welcomed')) return;
+            const content = `
+                <div class="p-6">
+                    <h2 class="text-2xl font-bold mb-4 text-purple-400">Welcome to the Gauntlet!</h2>
+                    <p class="mb-4 text-gray-300">This is "Loire Valley: Central Vineyards & Central France: A Wine Master's Challenge," an interactive study game for advanced wine students.</p>
+                    <p class="mb-6 text-gray-300">Test your knowledge across history, terroir, grapes, law, and more. All questions are derived from comprehensive research documents on the region. Good luck!</p>
+                    <button onclick="closeWelcomeModal()" class="w-full bg-purple-700 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">Begin</button>
+                </div>
+            `;
+            showModal(content);
+        }
+
+        function closeWelcomeModal() {
+            sessionStorage.setItem('welcomed', 'true');
+            hideModal();
+        }
+
+        function showInstructionalModal(module) {
+            currentModule = module;
+            const moduleData = gameData[module];
+            const content = `
+                <div class="p-6">
+                    <h2 class="text-2xl font-bold mb-4 text-purple-400">${moduleData.title}</h2>
+                    <p class="mb-6 text-gray-300">${moduleData.instructions}</p>
+                    <button onclick="startGame()" class="w-full bg-purple-700 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">Start Challenge</button>
+                </div>
+            `;
+            showModal(content);
+        }
+
+        function showEndGameModal() {
+            const moduleData = gameData[currentModule];
+            const content = `
+                <div class="p-6 text-center">
+                    <h2 class="text-2xl font-bold mb-4 text-purple-400">Module Complete!</h2>
+                    <p class="text-lg mb-2 text-gray-300">You completed "${moduleData.title}".</p>
+                    <p class="text-4xl font-bold mb-6">Score: ${score} / ${questions.length}</p>
+                    <div class="flex space-x-4">
+                        <button onclick="startGame()" class="w-full bg-purple-700 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">Keep Going</button>
+                        <button onclick="returnToMenu()" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">Main Menu</button>
+                    </div>
+                </div>
+            `;
+            showModal(content);
+        }
+
+        function showAiSettingsModal() {
+            const content = `
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-purple-400">AI Settings</h2>
+                        <button onclick="hideModal()" class="text-gray-400 hover:text-white">&times;</button>
+                    </div>
+                    <p class="mb-4 text-gray-300">To use the AI-powered features, please enter your Google AI Studio API key. You can get a key at <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-purple-400 hover:underline">aistudio.google.com/app/apikey</a>.</p>
+                    <p class="text-sm text-yellow-400 mb-4">Security Reminder: Treat your API key like a password. It is saved in your browser's local storage for convenience but is not transmitted anywhere else.</p>
+                    <div class="mb-4">
+                        <label for="api-key-input" class="block text-sm font-medium text-gray-300 mb-1">Google AI API Key</label>
+                        <input type="password" id="api-key-input" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white" value="${userApiKey}">
+                    </div>
+                    <button onclick="saveApiKey()" class="w-full bg-purple-700 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">Save and Close</button>
+                </div>
+            `;
+            showModal(content);
+        }
+    	
+        function saveApiKey() {
+            userApiKey = document.getElementById('api-key-input').value;
+            localStorage.setItem('geminiApiKey', userApiKey);
+            hideModal();
+        }
+
+        // --- Game Flow ---
+        function startGame() {
+            hideModal();
+            mainMenu.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            score = 0;
+            currentQuestionIndex = 0;
+
+            if (currentModule === 'historian') {
+                questions = shuffleArray([...gameData.historian.questions]).slice(0, 4); // Historian has a fixed number of questions
+                loadHistorianQuestion();
+            } else {
+                const allModuleQuestions = [...gameData[currentModule].questions];
+                const correctLog = JSON.parse(localStorage.getItem('correctlyAnsweredQuestions')) || {};
+                const correctQuestionsForModule = correctLog[currentModule] || [];
+
+                let availableQuestions = allModuleQuestions.filter(q => !correctQuestionsForModule.includes(q.q));
+
+                if (availableQuestions.length === 0 && allModuleQuestions.length > 0) {
+                    const masteryContent = `
+                        <div class="p-6 text-center">
+                            <h2 class="text-2xl font-bold mb-4 text-green-400">Module Mastered!</h2>
+                            <p class="mb-4 text-gray-300">Congratulations! You've correctly answered all questions in this module. Your progress will be reset so you can continue to sharpen your knowledge.</p>
+                            <button onclick="resetAndStartGame()" class="w-full bg-purple-700 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">Play Again</button>
+                        </div>
+                    `;
+                    showModal(masteryContent);
+                    return; 
+                }
+            	
+                questions = shuffleArray(availableQuestions).slice(0, 10);
+                loadQuestion();
+            }
+        }
+
+        function resetAndStartGame() {
+            let correctLog = JSON.parse(localStorage.getItem('correctlyAnsweredQuestions')) || {};
+            correctLog[currentModule] = [];
+            localStorage.setItem('correctlyAnsweredQuestions', JSON.stringify(correctLog));
+            startGame();
+        }
+
+        function returnToMenu() {
+            hideModal();
+            gameScreen.classList.add('hidden');
+            mainMenu.classList.remove('hidden');
+            gameScreen.innerHTML = '';
+            checkGlobalMastery();
+        }
+
+        // --- Multiple Choice Logic ---
+        function loadQuestion() {
+            if (questions.length === 0 || currentQuestionIndex >= questions.length) {
+                showEndGameModal();
+                return;
+            }
+
+            const q = questions[currentQuestionIndex];
+            const options = shuffleArray([q.a, ...q.o]);
+        	
+            gameScreen.innerHTML = `
+                <div class="w-full max-w-3xl">
+                    <div class="flex justify-between items-center mb-2">
+                        <button onclick="returnToMenu()" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded text-sm">← Menu</button>
+                        <p class="text-right text-gray-400">${currentQuestionIndex + 1} / ${questions.length} | Score: ${score}</p>
+                    </div>
+                    <div class="bg-gray-800 p-8 rounded-lg">
+                        <p class="text-xl md:text-2xl font-medium mb-6">${q.q}</p>
+                        <div class="space-y-4">
+                            ${options.map(option => `
+                                <button class="answer-btn block w-full text-left bg-gray-700 p-4 rounded-lg hover:bg-purple-700 transition-colors duration-200" onclick="checkAnswer('${option.replace(/'/g, "\\'")}')">
+                                    ${option}
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div id="feedback-container" class="mt-6"></div>
+                    </div>
+                </div>
+            `;
+        }
+    	
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+    	
+        function generateAiButtonHtml(question, isCorrect) {
+            if (!question.subjectType || !question.subjectName) {
+                return '';
+            }
+        	
+            let buttonText = isCorrect ? `➡️ Dive Deeper on ${question.subjectName}` : `💡 Learn More about ${question.subjectName}`;
+            if (question.subjectType === 'dish' || question.subjectType === 'wine_pairing') {
+                 buttonText = isCorrect ? `➡️ Explain the Pairing for ${question.subjectName}` : `💡 Learn about Pairing with ${question.subjectName}`;
+            }
+
+            return `<button onclick="handleAiRequest('${question.subjectType}', '${question.subjectName.replace(/'/g, "\\'")}')" class="mt-4 bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded text-sm">${buttonText}</button>`;
+        }
+
+        function checkAnswer(selectedOption) {
+            const q = questions[currentQuestionIndex];
+            const isCorrect = selectedOption === q.a;
+            const feedbackContainer = document.getElementById('feedback-container');
+        	
+            let feedbackHtml = '';
+            if (isCorrect) {
+                score++;
+                const questionText = q.q;
+                let correctLog = JSON.parse(localStorage.getItem('correctlyAnsweredQuestions')) || {};
+                if (!correctLog[currentModule]) {
+                    correctLog[currentModule] = [];
+                }
+                if (!correctLog[currentModule].includes(questionText)) {
+                    correctLog[currentModule].push(questionText);
+                }
+                localStorage.setItem('correctlyAnsweredQuestions', JSON.stringify(correctLog));
+
+                feedbackHtml = `<div class="p-4 rounded-lg bg-green-900 border border-green-700">
+                                    <p class="font-bold text-green-300">Correct!</p>
+                                    <p class="text-green-400">${q.a}</p>
+                                    ${generateAiButtonHtml(q, true)}
+                                </div>`;
+            } else {
+                feedbackHtml = `<div class="p-4 rounded-lg bg-red-900 border border-red-700">
+                                    <p class="font-bold text-red-300">Incorrect.</p>
+                                    <p class="text-red-400">The correct answer was: ${q.a}</p>
+                                     ${generateAiButtonHtml(q, false)}
+                                </div>`;
+            }
+
+            feedbackContainer.innerHTML = feedbackHtml;
+            document.querySelectorAll('.answer-btn').forEach(btn => {
+                btn.disabled = true;
+                if(btn.innerText === q.a) {
+                    btn.classList.remove('hover:bg-purple-700');
+                    btn.classList.add('bg-green-700');
+                }
+            });
+            feedbackContainer.innerHTML += `<button onclick="nextQuestion()" class="mt-4 w-full bg-purple-700 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">Continue</button>`;
+        }
+    	
+        // --- Historian's Scroll Logic ---
+        function loadHistorianQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                showEndGameModal();
+                return;
+            }
+
+            const q = questions[currentQuestionIndex];
+            userTimeline = [];
+        	
+            const eventsWithIds = q.events.map((event, index) => ({ ...event, id: `${currentQuestionIndex}-${index}` }));
+            historianAvailableEvents = shuffleArray(eventsWithIds);
+
+            gameScreen.innerHTML = `
+                <div class="w-full max-w-4xl">
+                    <div class="flex justify-between items-center mb-2">
+                        <button onclick="returnToMenu()" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded text-sm">← Menu</button>
+                        <p class="text-center text-gray-400">Question ${currentQuestionIndex + 1} / ${questions.length} | Score: ${score}</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <p class="text-xl text-center font-medium mb-6">${q.question}</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="font-bold text-lg mb-2 text-purple-400 text-center">Available Events</h3>
+                                <div id="available-events" class="space-y-2">
+                                    ${historianAvailableEvents.map(event => `
+                                        <button data-id="${event.id}" class="timeline-item w-full text-left bg-gray-700 p-3 rounded hover:bg-purple-800 transition-colors duration-200">
+                                            ${event.text}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg mb-2 text-purple-400 text-center">Your Timeline (Earliest to Latest)</h3>
+                                <div id="user-timeline" class="space-y-2 bg-gray-900 p-3 rounded-lg min-h-[200px]"></div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-6">
+                            <button id="submit-timeline" class="bg-purple-700 hover:bg-purple-600 text-white font-bold py-3 px-8 rounded-lg" onclick="checkTimeline()">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        	
+            document.querySelectorAll('#available-events .timeline-item').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const eventId = e.currentTarget.dataset.id;
+                    const event = historianAvailableEvents.find(ev => ev.id === eventId);
+                    if (event && !userTimeline.some(e => e.id === event.id)) {
+                        userTimeline.push(event);
+                        e.currentTarget.classList.add('selected', 'opacity-50', 'cursor-not-allowed');
+                        e.currentTarget.disabled = true;
+                        renderUserTimeline();
+                    }
+                });
+            });
+        }
+    	
+        function renderUserTimeline() {
+            const timelineContainer = document.getElementById('user-timeline');
+            timelineContainer.innerHTML = userTimeline.map((event, index) => `
+                <div class="bg-purple-900 p-3 rounded flex items-center justify-between">
+                    <span>${index + 1}. ${event.text}</span>
+                    <button class="text-red-400 hover:text-red-200 font-bold" onclick="removeFromTimeline('${event.id}')">&times;</button>
+                </div>
+            `).join('');
+        }
+
+        function removeFromTimeline(eventId) {
+            const indexToRemove = userTimeline.findIndex(event => event.id === eventId);
+
+            if (indexToRemove > -1) {
+                userTimeline.splice(indexToRemove, 1);
+                const buttonToReEnable = document.querySelector(`#available-events .timeline-item[data-id="${eventId}"]`);
+                if (buttonToReEnable) {
+                    buttonToReEnable.disabled = false;
+                    buttonToReEnable.classList.remove('selected', 'opacity-50', 'cursor-not-allowed');
+                }
+                renderUserTimeline();
+            }
+        }
+
+        function checkTimeline() {
+            const q = questions[currentQuestionIndex];
+            const correctTimeline = [...q.events].sort((a, b) => a.date - b.date);
+            let isCompletelyCorrect = userTimeline.length === correctTimeline.length;
+        	
+            if (isCompletelyCorrect) {
+                for (let i = 0; i < correctTimeline.length; i++) {
+                    if (userTimeline[i].text !== correctTimeline[i].text) {
+                        isCompletelyCorrect = false;
+                        break;
+                    }
+                }
+            }
+        	
+            if(isCompletelyCorrect) {
+                score++;
+            }
+
+            const userTimelineHtml = userTimeline.map((event, i) => {
+                const isEventInCorrectPosition = correctTimeline[i] && correctTimeline[i].text === event.text;
+                const borderColor = isEventInCorrectPosition ? 'border-green-500' : 'border-red-500';
+                return `<li class="p-2 bg-gray-700 rounded border-2 ${borderColor}">${event.text}</li>`;
+            }).join('');
+
+            const correctTimelineHtml = correctTimeline.map(e => 
+                `<li class="p-2 bg-gray-700 rounded border-2 border-green-500">${e.text} <span class="text-gray-400 text-sm">(${e.date})</span></li>`
+            ).join('');
+        	
+            const feedbackContent = `
+                <div class="p-6">
+                    <h2 class="text-2xl font-bold mb-4 ${isCompletelyCorrect ? 'text-green-400' : 'text-yellow-400'}">${isCompletelyCorrect ? 'Perfect!' : 'Review Your Timeline'}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="font-bold text-lg mb-2 text-purple-400">Your Timeline</h3>
+                            <ol class="list-decimal list-inside space-y-2">
+                                ${userTimelineHtml}
+                            </ol>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-2 text-purple-400">Correct Timeline</h3>
+                            <ol class="list-decimal list-inside space-y-2">
+                                ${correctTimelineHtml}
+                            </ol>
+                        </div>
+                    </div>
+                    <button onclick="nextHistorianQuestion()" class="mt-6 w-full bg-purple-700 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">Continue</button>
+                </div>
+            `;
+            showModal(feedbackContent);
+        }
+
+        function nextHistorianQuestion() {
+            hideModal();
+            currentQuestionIndex++;
+            loadHistorianQuestion();
+        }
+
+        // --- Mastery Logic ---
+        function checkGlobalMastery() {
+            if (sessionStorage.getItem('globalMasteryAcknowledged')) {
+                return;
+            }
+
+            const modulesToMaster = ['terroir', 'ampelographer', 'lawmaker', 'gastronome', 'critic'];
+            const correctLog = JSON.parse(localStorage.getItem('correctlyAnsweredQuestions')) || {};
+        	
+            let allMastered = true;
+            for (const module of modulesToMaster) {
+                const totalQuestions = gameData[module].questions.length;
+                const correctlyAnswered = (correctLog[module] || []).length;
+                if (correctlyAnswered < totalQuestions) {
+                    allMastered = false;
+                    break;
+                }
+            }
+
+            if (allMastered) {
+                showGlobalMasteryModal();
+            }
+        }
+
+        function showGlobalMasteryModal() {
+            const content = `
+                <div class="p-6 text-center">
+                    <h2 class="text-2xl font-bold mb-4 text-purple-400">Congratulations, Wine Master!</h2>
+                    <p class="mb-4 text-gray-300">You have demonstrated exceptional knowledge by correctly answering every question across all core modules. You have truly mastered the Central Loire!</p>
+                    <p class="mb-6 text-gray-300">To keep your expertise sharp, continue to practice with the <strong>Flashcard Study</strong> decks.</p>
+                    <button onclick="closeGlobalMasteryModal()" class="w-full bg-purple-700 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">Continue</button>
+                </div>
+            `;
+            showModal(content);
+        }
+
+        function closeGlobalMasteryModal() {
+            sessionStorage.setItem('globalMasteryAcknowledged', 'true');
+            hideModal();
+        }
+
+        // --- Flashcard Logic ---
+        function showFlashcardTopicSelection() {
+            const topics = Object.keys(flashcardData);
+            const content = `
+                <div class="p-6">
+                    <h2 class="text-2xl font-bold mb-4 text-purple-400">Build Your Flashcard Deck</h2>
+                    <p class="mb-6 text-gray-300">Select the topics you want to study. These decks cover the entire source document.</p>
+                    <div id="flashcard-topics" class="space-y-2 mb-4">
+                        ${topics.map(topic => `
+                            <label class="flex items-center bg-gray-700 p-3 rounded-lg hover:bg-gray-600 cursor-pointer">
+                                <input type="checkbox" class="form-checkbox h-5 w-5 text-purple-600 bg-gray-800 border-gray-600 rounded focus:ring-purple-500" data-topic="${topic}">
+                                <span class="ml-3 text-white">${gameData[topic].title}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                     <label class="flex items-center bg-gray-700 p-3 rounded-lg hover:bg-gray-600 cursor-pointer mb-6">
+                        <input type="checkbox" id="select-all-topics" class="form-checkbox h-5 w-5 text-purple-600 bg-gray-800 border-gray-600 rounded focus:ring-purple-500">
+                        <span class="ml-3 text-white font-bold">Select All</span>
+                    </label>
+                    <button onclick="startFlashcardSession()" class="w-full bg-purple-700 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">Start Studying</button>
+                </div>
+            `;
+            showModal(content);
+        	
+            document.getElementById('select-all-topics').addEventListener('change', (e) => {
+                document.querySelectorAll('#flashcard-topics input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = e.target.checked;
+                });
+            });
+        }
+
+        function startFlashcardSession() {
+            flashcardDeck = [];
+            const selectedTopics = Array.from(document.querySelectorAll('#flashcard-topics input:checked')).map(cb => cb.dataset.topic);
+
+            if (selectedTopics.length === 0) {
+                showModal(`<div class="p-6 text-center">
+                    <p class="text-lg text-yellow-400 mb-4">Please select at least one topic.</p>
+                    <button onclick="showFlashcardTopicSelection()" class="w-full bg-purple-700 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">Go Back</button>
+                </div>`);
+                return;
+            }
+
+            selectedTopics.forEach(topic => {
+                if (flashcardData[topic]) {
+                    flashcardDeck.push(...flashcardData[topic]);
+                }
+            });
+
+            flashcardDeck = shuffleArray(flashcardDeck);
+            currentFlashcardIndex = 0;
+            hideModal();
+            mainMenu.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            loadFlashcard();
+        }
+
+        function loadFlashcard() {
+            if (flashcardDeck.length === 0) {
+                gameScreen.innerHTML = `<div class="text-center">
+                    <p class="text-2xl mb-4">No topics selected.</p>
+                    <button onclick="returnToMenu()" class="bg-purple-700 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">Main Menu</button>
+                </div>`;
+                return;
+            }
+            const card = flashcardDeck[currentFlashcardIndex];
+            gameScreen.innerHTML = `
+                <div class="w-full max-w-2xl flex flex-col items-center">
+                    <p class="text-gray-400 mb-4">${currentFlashcardIndex + 1} / ${flashcardDeck.length}</p>
+                    <div class="flashcard-container w-full h-80 mb-6">
+                        <div class="flashcard" onclick="this.classList.toggle('is-flipped')">
+                            <div class="flashcard-face flashcard-front text-2xl font-semibold text-center">${card.q}</div>
+                            <div class="flashcard-face flashcard-back text-xl text-center overflow-y-auto">${card.a}</div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between w-full">
+                        <button id="prev-card" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded">&larr; Previous</button>
+                        <button onclick="returnToMenu()" class="bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-6 rounded">End Session</button>
+                        <button id="next-card" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded">Next &rarr;</button>
+                    </div>
+                </div>
+            `;
+        	
+            document.getElementById('prev-card').addEventListener('click', () => {
+                if (currentFlashcardIndex > 0) {
+                    currentFlashcardIndex--;
+                    loadFlashcard();
+                }
+            });
+            document.getElementById('next-card').addEventListener('click', () => {
+                if (currentFlashcardIndex < flashcardDeck.length - 1) {
+                    currentFlashcardIndex++;
+                    loadFlashcard();
+                }
+            });
+        }
+    	
+        // --- AI Integration ---
+        async function handleAiRequest(subjectType, subjectName) {
+            if (!userApiKey) {
+                showModal(`<div class="p-6 text-center">
+                    <h2 class="text-2xl font-bold mb-4 text-yellow-400">API Key Required</h2>
+                    <p class="mb-4 text-gray-300">Please set your Google AI API key in the 'AI Settings' on the main menu to use this feature.</p>
+                    <button onclick="hideModal()" class="w-full bg-purple-700 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">Close</button>
+                </div>`);
+                return;
+            }
+
+            let prompt;
+            let title;
+            const region = "Loire Valley: Central Vineyards & Central France";
+
+            switch (subjectType) {
+                case 'clone':
+                case 'grape':
+                    title = `Ampelography Profile: ${subjectName}`;
+                    prompt = `You are a master ampelographer and wine educator with a specialization in the ${region}. Your task is to profile the grape or clone: ${subjectName}. Your response must follow this strict pyramid of importance: 1. The subject's specific expression and role within the ${region}. 2. Its general viticultural characteristics as they manifest in the region's climate. 3. Its history within the region. Your entire response must be framed through the lens of the ${region}. Synthesize information from authoritative sources, but always prioritize the context of the ${region}. Structure your response with the following sections: Overview and History in the ${region}, Viticultural Characteristics in the ${region}, and Typical ${region} Wine Profile. Format the output in simple HTML.`;
+                    break;
+                case 'wine':
+                case 'producer':
+                case 'vintage':
+                case 'place':
+                case 'wine_style':
+                case 'history':
+                case 'critic':
+                    title = `Critic's Focus: ${subjectName}`;
+                    prompt = `You are a world-renowned wine critic specializing exclusively in the wines of the ${region}. Your task is to write a professional profile for the following iconic ${region} topic: ${subjectName}. Your analysis must adhere to a strict pyramid of importance: 1) The specific subject's style or character. 2) The character of its specific appellation within the ${region}. 3) The general characteristics of the ${region}. Do not mention wines from other regions unless making a direct, essential stylistic comparison. Synthesize information from authoritative sources like Vinous, The Wine Advocate, and JancisRobinson.com, but ensure the final note is your own expert synthesis. Format in simple HTML.`;
+                    break;
+                case 'dish':
+                case 'wine_pairing':
+                    title = `Gastronomic Pairing: ${subjectName}`;
+                    prompt = `You are a master sommelier and food theorist specializing in the cuisine and wine of the ${region}. Your task is to explain the classic wine pairing: ${subjectName}. Your explanation must follow this strict pyramid of importance: 1. The specific characteristics of the dish/pairing as found in the region. 2. The typical profile of a ${region} wine that pairs with it. 3. The underlying gastronomic principles (complement, contrast, texture) that make the pairing successful within the context of the region's culture. Synthesize information from expert sources, but frame your entire response within the context of the ${region}. Format in simple HTML.`;
+                    break;
+                case 'ingredient':
+                case 'gastronomy':
+                    title = `Ingredient Focus: ${subjectName}`;
+                    prompt = `You are a food and wine expert specializing in the cuisine of the ${region}. Your task is to provide a detailed overview of the ingredient: ${subjectName}. Your response must follow this strict pyramid of importance: 1. How this ingredient is used in the local cuisine of the ${region}. 2. Its typical flavor and aromatic profile. 3. How its profile might be reflected in or complement the local wines. Do not focus on specific pairings unless it is intrinsic to the ingredient itself. Synthesize from authoritative sources. Format in simple HTML.`;
+                    break;
+                case 'beverage':
+                    title = `Beverage Profile: ${subjectName}`;
+                    prompt = `You are an expert on the spirits and beers of France, with a specialization in the ${region}. Your task is to provide a detailed overview of ${subjectName}. Your response must follow this strict pyramid of importance: 1. How ${subjectName} is made and consumed specifically within the ${region}. 2. Its key ingredients and typical flavor profile. 3. Its cultural significance in the ${region}. Do not focus on wine pairings unless it is a key part of its consumption. Synthesize information from authoritative sources. Format in simple HTML.`;
+                    break;
+                default:
+                    title = `Expert Overview: ${subjectName}`;
+                    prompt = `You are a wine and food expert specializing in the ${region}. Provide a concise and informative overview of the following topic: ${subjectName}, ensuring your response is strictly relevant to its context within the ${region}. Format in simple HTML.`;
+            }
+        	
+            showModal(`<div class="p-6 text-center">
+                <h2 class="text-2xl font-bold mb-4 text-purple-400">Generating AI Response...</h2>
+                <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto"></div>
+                <p class="mt-4 text-gray-400">Please wait, contacting the master sommelier...</p>
+            </div>`);
+
+            try {
+                const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                const payload = { contents: chatHistory };
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${userApiKey}`;
+            	
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error.message || `API request failed with status ${response.status}`);
+                }
+
+                const result = await response.json();
+            	
+                if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts[0]) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    const aiContent = `
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-purple-400">${title}</h2>
+                                <button onclick="hideModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+                            </div>
+                            <div class="prose prose-invert prose-purple max-w-none">${text.replace(/\n/g, '<br>')}</div>
+                        </div>`;
+                    showModal(aiContent);
+                } else {
+                     throw new Error("Invalid response structure from API.");
+                }
+
+            } catch (error) {
+                console.error("AI Generation Error:", error);
+                const errorContent = `
+                    <div class="p-6">
+                        <h2 class="text-2xl font-bold mb-4 text-red-400">Error</h2>
+                        <p class="mb-4 text-gray-300">Could not generate AI response. Please check your API key and network connection.</p>
+                        <p class="text-sm text-gray-500 bg-gray-900 p-2 rounded">${error.message}</p>
+                        <button onclick="hideModal()" class="mt-4 w-full bg-purple-700 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">Close</button>
+                    </div>`;
+                showModal(errorContent);
+            }
+        }
+
+        // --- Utility Functions ---
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // --- Initial Load ---
+        window.onload = showWelcomeModal;
+
+    </script>
+</body>
+</html>
